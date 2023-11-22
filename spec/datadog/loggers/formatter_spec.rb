@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-require "datadog/loggers/formatter"
+require "datadog/loggers/json_formatter"
 
-class CustomerFormatter < Datadog::Loggers::Formatter
+class CustomerFormatter < Datadog::Loggers::JSONFormatter
   def self.call(severity, datetime, progname, msg)
     super do |log_hash|
       log_hash[:my_custom_key] = "my_value"
@@ -11,7 +11,7 @@ class CustomerFormatter < Datadog::Loggers::Formatter
   end
 end
 
-RSpec.describe Datadog::Loggers::Formatter do
+RSpec.describe Datadog::Loggers::JSONFormatter do
   let(:json) { JSON.parse(result) }
 
   describe "#call" do

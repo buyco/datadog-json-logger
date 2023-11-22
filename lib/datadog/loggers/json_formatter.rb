@@ -6,7 +6,7 @@ require "json"
 
 module Datadog
   module Loggers
-    class Formatter < Logger::Formatter
+    class JSONFormatter < Logger::Formatter
       def self.call(severity, datetime, progname, msg)
         log_hash = {
           dd: correlation_hash,

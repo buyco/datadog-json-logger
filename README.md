@@ -39,6 +39,34 @@ def logger
 end
 
 set :logger, logger
+
+Sinatra::Application.logger.info("hello")
+# => {"dd":{"trace_id":"0","span_id":"0","env":null,"service":"console","version":null},"timestamp":"2023-11-22 22:28:00 +0100","severity":"INFO ","progname":"","message":"hello"}
+```
+
+#### Add custom keys
+Add custom keys by create a custom formatter that inerit from `Datadog::Logger::JSONFormatter` and do like follow
+```ruby
+class CustomerFormatter < Datadog::Loggers::JSONFormatter
+  def self.call(severity, datetime, progname, msg)
+    super do |log_hash|
+      log_hash[:my_custom_key] = "my_value"
+      log_hash[:my_custom_hash] = { key: "value" }
+    end
+  end
+end
+
+def logger
+  return @logger if @logger
+
+  @logger = Datadog::JSONLogger.new
+  @logger.progname = "my_app"
+  @logger.formatter = CustomerFormatter
+  @logger
+end
+
+Sinatra::Application.logger.info("hello")
+# {"dd":{"trace_id":"0","span_id":"0","env":null,"service":"console","version":null},"timestamp":"2023-11-22 22:46:01 +0100","severity":"INFO ","progname":"my_app","message":"hello","my_custom_key":"my_value","my_custom_hash":{"key":"value"}}
 ```
 
 ### SinatraMiddleware
