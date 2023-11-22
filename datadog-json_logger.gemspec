@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = "This gem provides easy integration for connecting a ruby application to Datadog's logging and tracing services." # rubocop:disable Layout/LineLength
   spec.homepage = "https://github.com/eth3rnit3/datadog-json_logger"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 2.6.0"
+  spec.required_ruby_version = ">= 3.0"
 
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
 
@@ -36,4 +36,5 @@ Gem::Specification.new do |spec|
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
+  spec.metadata["rubygems_mfa_required"] = "true"
 end

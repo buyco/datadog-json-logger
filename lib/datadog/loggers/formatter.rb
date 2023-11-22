@@ -29,6 +29,8 @@ module Datadog
           log_hash[:message] = msg.to_s
         end
 
+        yield(log_hash) if block_given?
+
         log_hash.to_json + "\r\n" # rubocop:disable Style/StringConcatenation
       end
 

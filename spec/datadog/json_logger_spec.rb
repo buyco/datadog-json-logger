@@ -8,16 +8,19 @@ RSpec.describe Datadog::JSONLogger do
   subject(:logger) { described_class.new(output) }
 
   describe "#initialize" do
-    it "initializes with default STDOUT" do
+    it "initializes with custom output" do
       expect(logger.instance_variable_get(:@logdev).dev).to eq(output)
     end
   end
 
   describe "logging" do
-    it "logs messages in JSON format" do
-      logger.info("Test message")
+    let(:log) do
       output.rewind
-      expect(JSON.parse(output.string)).to include("message" => "Test message")
+      JSON.parse(output.string)
     end
+
+    before { logger.info("Test message") }
+
+    it { expect(log).to include("message" => "Test message") }
   end
 end
