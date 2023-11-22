@@ -4,6 +4,10 @@
 
 `Datadog::JSONLogger` is a Ruby gem designed to seamlessly integrate Ruby applications with Datadog's logging and tracing services. This gem allows your Ruby application to format its output as JSON, including necessary correlation IDs and other details for optimal Datadog functionality.
 
+## Prerequisites
+
+Before you begin, ensure you have [ddtrace](https://github.com/DataDog/dd-trace-rb) configured in your Ruby application, as `Datadog::JSONLogger` relies on `ddtrace` for tracing data.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -44,10 +48,11 @@ Sinatra::Application.logger.info("hello")
 # => {"dd":{"trace_id":"0","span_id":"0","env":null,"service":"console","version":null},"timestamp":"2023-11-22 22:28:00 +0100","severity":"INFO ","progname":"","message":"hello"}
 ```
 
-#### Add custom keys
-Add custom keys by create a custom formatter that inerit from `Datadog::Logger::JSONFormatter` and do like follow
+#### Add Custom Keys
+Create a custom formatter that inherits from `Datadog::Loggers::JSONFormatter` to add custom keys as shown below:
+
 ```ruby
-class CustomerFormatter < Datadog::Loggers::JSONFormatter
+class CustomFormatter < Datadog::Loggers::JSONFormatter
   def self.call(severity, datetime, progname, msg)
     super do |log_hash|
       log_hash[:my_custom_key] = "my_value"
@@ -61,7 +66,7 @@ def logger
 
   @logger = Datadog::JSONLogger.new
   @logger.progname = "my_app"
-  @logger.formatter = CustomerFormatter
+  @logger.formatter = CustomFormatter
   @logger
 end
 
