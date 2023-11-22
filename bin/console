@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require "bundler/setup"
+Bundler.require(:development)
 require "datadog/json_logger"
 
 # You can add fixtures and/or initialization code here to make experimenting

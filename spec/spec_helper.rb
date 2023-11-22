@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+Bundler.require(:test)
 require "datadog/json_logger"
 
 RSpec.configure do |config|
