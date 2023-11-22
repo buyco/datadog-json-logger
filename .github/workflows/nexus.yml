@@ -1,0 +1,32 @@
+name: Nexus upload
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Ruby ${{ matrix.ruby }}
+    strategy:
+      matrix:
+        ruby:
+          - '3.2.2'
+
+    steps:
+      - name: Install dependencies
+        run: |
+          gem install bundler
+          bundle install
+
+      - name: Build Gem
+        run: |
+          gem build datadog-json_logger.gemspec
+          echo "::set-output name=gem_file::$(ls -1 | grep '.gem$' | head -n 1)"
+
+      - name: Publish Gem to Nexus
+        run: |
+          gem push --key nexus https://domain.com/repository/my-gems/${{ steps.build.outputs.gem_file }}
+        env:
+          GEM_HOST_API_KEY: ${{ secrets.YOUR_GEM_HOST_API_KEY }}
