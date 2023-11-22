@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "uri"
+require "json"
 
 module Rack
   class CommonLogger
@@ -16,31 +17,65 @@ module Datadog
     attr_reader :app, :logger
 
     def initialize(app, logger)
-      @app    = app
+      @app = app
       @logger = logger
     end
 
     def call(env)
-      request               = Rack::Request.new(env)
-      params_array          = URI.decode_www_form(request.query_string)
-      start_time            = Time.now
-      status, headers, body = app.call(env)
-      end_time              = Time.now
+      request = Rack::Request.new(env)
+      start_time = Time.now
 
-      logger.info(
-        request: true,
-        request_ip: request.ip.to_s,
-        method: request.request_method.to_s,
-        controller: env["sinatra.controller_name"],
-        action: env["sinatra.action_name"],
-        path: request.path.to_s,
-        params: params_array.to_h,
-        status: status,
-        format: headers["Content-Type"],
-        duration: (end_time - start_time).to_i
-      )
+      status, headers, body = safely_process_request(env)
+      end_time = Time.now
+
+      log_request(request, env, status, headers, start_time, end_time)
 
       [status, headers, body]
+    rescue StandardError => e
+      handle_exception(e)
+    end
+
+    private
+
+    def safely_process_request(env)
+      app.call(env)
+    rescue StandardError
+      [500, { "Content-Type" => "text/html" }, ["Internal Server Error"]]
+    end
+
+    def log_request(request, env, status, headers, start_time, end_time)
+      log_data = {
+        request: true,
+        request_ip: request.ip,
+        method: request.request_method,
+        controller: env["sinatra.controller_name"],
+        action: env["sinatra.action_name"],
+        path: request.path,
+        params: parse_query(request.query_string),
+        status: status,
+        format: headers["Content-Type"],
+        duration: calculate_duration(start_time, end_time)
+      }
+
+      logger.info(log_data)
+    end
+
+    def calculate_duration(start_time, end_time)
+      ((end_time - start_time) * 1000).round # Duration in milliseconds
+    end
+
+    def parse_query(query_string)
+      URI.decode_www_form(query_string).to_h
+    end
+
+    def handle_exception(exception)
+      logger.error(
+        exception: exception.class.name,
+        exception_message: exception.message,
+        exception_backtrace: exception.backtrace
+      )
+
+      raise exception
     end
   end
 end
