@@ -12,9 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Install and build gem
 
-    outputs:
-      gem_file: ${{ steps.set_gem_file.outputs.gem_file }}
-
     steps:
       - uses: actions/checkout@v4
 
@@ -38,7 +35,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Build Custom Docker Image
         run: docker build -t nexus-uploader -f Dockerfile.nexus .
