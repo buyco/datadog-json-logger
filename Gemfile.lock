@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    datadog-json_logger (0.1.1.pre.test)
+    datadog-json_logger (0.1.1.pre.test.pre.1)
       ddtrace (~> 1.16.2)
 
 GEM
@@ -24,6 +24,8 @@ GEM
     language_server-protocol (3.17.0.3)
     libdatadog (5.0.0.1.0)
     libdatadog (5.0.0.1.0-x86_64-linux)
+    libddwaf (1.14.0.0.0)
+      ffi (~> 1.0)
     libddwaf (1.14.0.0.0-arm64-darwin)
       ffi (~> 1.0)
     libddwaf (1.14.0.0.0-x86_64-linux)
@@ -82,6 +84,7 @@ GEM
 
 PLATFORMS
   arm64-darwin-23
+  ruby
   x86_64-linux
 
 DEPENDENCIES
