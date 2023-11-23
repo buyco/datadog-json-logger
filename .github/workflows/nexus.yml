@@ -10,11 +10,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Ruby ${{ matrix.ruby }}
-    strategy:
-      matrix:
-        ruby:
-          - '3.2.2'
+    name: Install and build gem
+
+    outputs:
+      gem_file: ${{ steps.set_gem_file.outputs.gem_file }}
 
     steps:
       - uses: actions/checkout@v4
@@ -22,15 +21,15 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby }}
+          ruby-version: '3.2.2'
           bundler-cache: true
-      - name: Run the default task
-        run: bundle install
 
       - name: Build Gem
-        run: |
-          gem build datadog-json_logger.gemspec
-          echo "gem_file=$(ls -1 | grep '.gem$' | head -n 1)" >> $GITHUB_ENV
+        run: gem build datadog-json_logger.gemspec
+
+      - name: Set Gem File Output
+        id: set_gem_file
+        run: echo "::set-output name=gem_file::$(ls -1 | grep '.gem$' | head -n 1)"
 
   deploy:
     runs-on: ubuntu-latest
@@ -47,9 +46,8 @@ jobs:
           ruby-version: 3.0.1
 
       - name: Install Nexus Gem
-        run: |
-          gem install nexus
+        run: gem install nexus
 
       - name: Deploy to Nexus
         run: |
-          gem nexus --url ${{ secrets.NEXUS_DEPLOY_URL }} --credential ${{ secrets.NEXUS_CREDENTIALS }} ${{ env.gem_file }}
+          gem nexus --url ${{ secrets.NEXUS_DEPLOY_URL }} --credential ${{ secrets.NEXUS_CREDENTIALS }} ${{ needs.build.outputs.gem_file }}
