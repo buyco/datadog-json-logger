@@ -4,11 +4,13 @@ on:
   push:
     tags:
       - '*'
+    branches:
+      - develop
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Build and compile gem
+    name: Ruby ${{ matrix.ruby }}
     strategy:
       matrix:
         ruby:
@@ -17,7 +19,6 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          gem install bundler
           bundle install
 
       - name: Build Gem
