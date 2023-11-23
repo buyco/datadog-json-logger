@@ -40,14 +40,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Set up Ruby 3.0.1
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.0.1
+      - name: Build Custom Docker Image
+        run: docker build -t nexus-uploader -f Dockerfile.nexus .
 
-      - name: Install Nexus Gem
-        run: gem install nexus
-
-      - name: Deploy to Nexus
-        run: |
-          gem nexus --url ${{ secrets.NEXUS_DEPLOY_URL }} --credential ${{ secrets.NEXUS_CREDENTIALS }} ${{ needs.build.outputs.gem_file }}
+      - name: Run Custom Docker Container
+        env:
+          NEXUS_DEPLOY_URL: ${{ secrets.NEXUS_DEPLOY_URL }}
+          NEXUS_CREDENTIALS: ${{ secrets.NEXUS_CREDENTIALS }}
+        run: docker run -e NEXUS_DEPLOY_URL -e NEXUS_CREDENTIALS nexus-uploader
