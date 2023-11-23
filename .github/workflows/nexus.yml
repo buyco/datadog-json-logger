@@ -8,41 +8,30 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Build and compile gem
     strategy:
       matrix:
         ruby:
           - '3.2.2'
+    name: Install and build gem
 
     steps:
-      - name: Install dependencies
-        run: |
-          gem install bundler
-          bundle install
+      - uses: actions/checkout@v4
 
-      - name: Build Gem
-        run: |
-          gem build datadog-json_logger.gemspec
-          echo "gem_file=$(ls -1 | grep '.gem$' | head -n 1)" >> $GITHUB_ENV
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    name: Deploy with Nexus using Ruby 3.0.1
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Set up Ruby 3.0.1
+      - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.0.1
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+          cache-version: 1
 
-      - name: Install Nexus Gem
-        run: |
-          gem install nexus
+      - name: Build Gem
+        run: gem build datadog-json_logger.gemspec
 
-      - name: Deploy to Nexus
-        run: |
-          gem nexus --url ${{ secrets.NEXUS_DEPLOY_URL }} --credential ${{ secrets.NEXUS_CREDENTIALS }} ${{ env.gem_file }}
+      - name: Build Custom Docker Image
+        run: docker build -t nexus-uploader -f Dockerfile.nexus .
+
+      - name: Run Custom Docker Container
+        env:
+          NEXUS_DEPLOY_URL: ${{ secrets.NEXUS_DEPLOY_URL }}
+          NEXUS_CREDENTIALS: ${{ secrets.NEXUS_CREDENTIALS }}
+        run: docker run -e NEXUS_DEPLOY_URL -e NEXUS_CREDENTIALS nexus-uploader
