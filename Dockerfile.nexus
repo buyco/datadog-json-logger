@@ -7,8 +7,6 @@ WORKDIR /gem
 
 RUN chmod +x nexus_release.sh
 
-RUN bundle install
 RUN gem install nexus
-RUN gem build datadog-json_logger.gemspec
 
 CMD ["/bin/sh", "/gem/nexus_release.sh"]

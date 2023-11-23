@@ -10,6 +10,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby:
+          - '3.2.2'
     name: Install and build gem
 
     steps:
@@ -18,24 +22,12 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2.2'
+          ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
+          cache-version: 1
 
       - name: Build Gem
         run: gem build datadog-json_logger.gemspec
-
-      - name: Set Gem File Output
-        id: set_gem_file
-        run: echo "::set-output name=gem_file::$(ls -1 | grep '.gem$' | head -n 1)"
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    name: Deploy with Nexus using Ruby 3.0.1
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
 
       - name: Build Custom Docker Image
         run: docker build -t nexus-uploader -f Dockerfile.nexus .
