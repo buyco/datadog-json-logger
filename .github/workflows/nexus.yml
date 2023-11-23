@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Ruby ${{ matrix.ruby }}
+    name: Build and compile gem
     strategy:
       matrix:
         ruby:
@@ -23,10 +23,26 @@ jobs:
       - name: Build Gem
         run: |
           gem build datadog-json_logger.gemspec
-          echo "::set-output name=gem_file::$(ls -1 | grep '.gem$' | head -n 1)"
+          echo "gem_file=$(ls -1 | grep '.gem$' | head -n 1)" >> $GITHUB_ENV
 
-      - name: Publish Gem to Nexus
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    name: Deploy with Nexus using Ruby 3.0.1
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Ruby 3.0.1
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.0.1
+
+      - name: Install Nexus Gem
         run: |
-          gem push --key nexus https://domain.com/repository/my-gems/${{ steps.build.outputs.gem_file }}
-        env:
-          GEM_HOST_API_KEY: ${{ secrets.YOUR_GEM_HOST_API_KEY }}
+          gem install nexus
+
+      - name: Deploy to Nexus
+        run: |
+          gem nexus --url ${{ secrets.NEXUS_DEPLOY_URL }} --credential ${{ secrets.NEXUS_CREDENTIALS }} ${{ env.gem_file }}
