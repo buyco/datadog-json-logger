@@ -10,7 +10,7 @@ target :lib do
   # library "strong_json"           # Gems
   library "logger"
   library "uri"
-  library "rack"
+  library "json"
 
   # configure_code_diagnostics(D::Ruby.default)      # `default` diagnostics setting (applies by default)
   # configure_code_diagnostics(D::Ruby.strict)       # `strict` diagnostics setting

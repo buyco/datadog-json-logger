@@ -1,0 +1,90 @@
+module Datadog
+  # Datadog APM tracing public API.
+  #
+  # The Datadog team ensures that public methods in this module
+  # only receive backwards compatible changes, and breaking changes
+  # will only occur in new major versions releases.
+  # @public_api
+  module Tracing
+    # (see Datadog::Tracing::Tracer#trace)
+    # @public_api
+    def self.trace: (untyped name, ?continue_from: untyped?, **untyped span_options) { () -> untyped } -> untyped
+
+    # (see Datadog::Tracing::Tracer#continue_trace!)
+    # @public_api
+    def self.continue_trace!: (untyped digest) { () -> untyped } -> untyped
+
+    # The tracer's internal logger instance.
+    # All tracing log output is handled by this object.
+    #
+    # The logger can be configured through {.configure},
+    # through {Datadog::Core::Configuration::Settings::DSL::Logger} options.
+    #
+    # @!attribute [r] logger
+    # @public_api
+    def self.logger: () -> untyped
+
+    # (see Datadog::Tracing::Tracer#active_trace)
+    # @public_api
+    def self.active_trace: () -> (nil | untyped)
+
+    # (see Datadog::Tracing::Tracer#active_span)
+    # @public_api
+    def self.active_span: () -> (nil | untyped)
+
+    # (see Datadog::Tracing::TraceSegment#keep!)
+    # If no trace is active, no action is taken.
+    # @public_api
+    def self.keep!: () -> untyped
+
+    # (see Datadog::Tracing::TraceSegment#reject!)
+    # If no trace is active, no action is taken.
+    # @public_api
+    def self.reject!: () -> untyped
+
+    # (see Datadog::Tracing::Tracer#active_correlation)
+    # @public_api
+    def self.correlation: () -> (nil | untyped)
+
+    # Textual representation of {.correlation}, which can be
+    # added to individual log lines in order to correlate them with the active
+    # trace.
+    #
+    # Example:
+    #
+    # ```
+    # MyLogger.log("#{Datadog::Tracing.log_correlation}] My message")
+    # # dd.env=prod dd.service=auth dd.version=13.8 dd.trace_id=5458478252992251 dd.span_id=7117552347370098 My message
+    # ```
+    #
+    # @return [String] correlation information
+    # @public_api
+    def self.log_correlation: () -> untyped
+
+    # Gracefully shuts down the tracer.
+    #
+    # The public tracing API will still respond to method calls as usual
+    # but might not internally perform the expected internal work after shutdown.
+    #
+    # This avoids errors being raised across the host application
+    # during shutdown while allowing for the graceful decommission of resources.
+    #
+    # {.shutdown!} cannot be reversed.
+    # @public_api
+    def self.shutdown!: () -> (nil | untyped)
+
+    # (see Datadog::Tracing::Pipeline.before_flush)
+    def self.before_flush: (*untyped processors) { () -> untyped } -> untyped
+
+    # Is the tracer collecting telemetry data in this process?
+    # @return [Boolean] `true` if the tracer is collecting data in this process, otherwise `false`.
+    def self.enabled?: () -> (false | untyped)
+
+    private
+
+    # DEV: components hosts both tracing and profiling inner objects today
+    def self.components: () -> untyped
+
+    def self.tracer: () -> untyped
+  end
+end

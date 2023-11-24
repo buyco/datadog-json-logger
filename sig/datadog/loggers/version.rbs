@@ -1,3 +1,5 @@
-module Datadog::Loggers
-  VERSION: String
+module Datadog
+  module Loggers
+    VERSION: String
+  end
 end

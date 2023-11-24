@@ -5,7 +5,10 @@ module Datadog
   class JSONLogger < Logger
     @default_formatter: untyped
 
-    def initialize: (?(_IO | ::StringIO | ::File) output) -> void
-    def default_output: () -> _IO
+    def initialize: (?untyped output) -> void
+
+    private
+
+    def default_output: () -> untyped
   end
 end

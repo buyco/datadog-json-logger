@@ -1,0 +1,362 @@
+module Rack
+  class Request
+    self.@forwarded_priority: untyped
+
+    self.@x_forwarded_proto_priority: untyped
+
+    @env: untyped
+
+    @params: untyped
+
+    attr_accessor self.ip_filter: untyped
+
+    # The priority when checking forwarded headers. The default
+    # is <tt>[:forwarded, :x_forwarded]</tt>, which means, check the
+    # +Forwarded+ header first, followed by the appropriate
+    # <tt>X-Forwarded-*</tt> header.  You can revert the priority by
+    # reversing the priority, or remove checking of either
+    # or both headers by removing elements from the array.
+    #
+    # This should be set as appropriate in your environment
+    # based on what reverse proxies are in use.  If you are not
+    # using reverse proxies, you should probably use an empty
+    # array.
+    attr_accessor self.forwarded_priority: untyped
+
+    # The priority when checking either the <tt>X-Forwarded-Proto</tt>
+    # or <tt>X-Forwarded-Scheme</tt> header for the forwarded protocol.
+    # The default is <tt>[:proto, :scheme]</tt>, to try the
+    # <tt>X-Forwarded-Proto</tt> header before the
+    # <tt>X-Forwarded-Scheme</tt> header.  Rack 2 had behavior
+    # similar to <tt>[:scheme, :proto]</tt>.  You can remove either or
+    # both of the entries in array to ignore that respective header.
+    attr_accessor self.x_forwarded_proto_priority: untyped
+
+    ALLOWED_SCHEMES: ::Array["https" | "http" | "wss" | "ws"]
+
+    def initialize: (untyped env) -> void
+
+    def params: () -> untyped
+
+    def update_param: (untyped k, untyped v) -> untyped
+
+    def delete_param: (untyped k) -> untyped
+
+    module Env
+      @env: untyped
+
+      # The environment of the request.
+      attr_reader env: untyped
+
+      def initialize: (untyped env) -> void
+
+      # Predicate method to test to see if `name` has been set as request
+      # specific data
+      def has_header?: (untyped name) -> untyped
+
+      # Get a request specific value for `name`.
+      def get_header: (untyped name) -> untyped
+
+      # If a block is given, it yields to the block if the value hasn't been set
+      # on the request.
+      def fetch_header: (untyped name) { () -> untyped } -> untyped
+
+      # Loops through each key / value pair in the request specific data.
+      def each_header: () { () -> untyped } -> untyped
+
+      # Set a request specific value for `name` to `v`
+      def set_header: (untyped name, untyped v) -> untyped
+
+      # Add a header that may have multiple values.
+      #
+      # Example:
+      #   request.add_header 'Accept', 'image/png'
+      #   request.add_header 'Accept', '*/*'
+      #
+      #   assert_equal 'image/png,*/*', request.get_header('Accept')
+      #
+      # http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
+      def add_header: (untyped key, untyped v) -> untyped
+
+      # Delete a request specific value for `name`.
+      def delete_header: (untyped name) -> untyped
+
+      def initialize_copy: (untyped other) -> untyped
+    end
+
+    module Helpers
+      # The set of form-data media-types. Requests that do not indicate
+      # one of the media types present in this list will not be eligible
+      # for form-data / param parsing.
+      FORM_DATA_MEDIA_TYPES: ::Array["application/x-www-form-urlencoded" | "multipart/form-data"]
+
+      # The set of media-types. Requests that do not indicate
+      # one of the media types present in this list will not be eligible
+      # for param parsing like soap attachments or generic multiparts
+      PARSEABLE_DATA_MEDIA_TYPES: ::Array["multipart/related" | "multipart/mixed"]
+
+      # Default ports depending on scheme. Used to decide whether or not
+      # to include the port in a generated URI.
+      DEFAULT_PORTS: ::Hash[::String, 80 | 443]
+
+      # The address of the client which connected to the proxy.
+      HTTP_X_FORWARDED_FOR: "HTTP_X_FORWARDED_FOR"
+
+      # The contents of the host/:authority header sent to the proxy.
+      HTTP_X_FORWARDED_HOST: "HTTP_X_FORWARDED_HOST"
+
+      HTTP_FORWARDED: "HTTP_FORWARDED"
+
+      # The value of the scheme sent to the proxy.
+      HTTP_X_FORWARDED_SCHEME: "HTTP_X_FORWARDED_SCHEME"
+
+      # The protocol used to connect to the proxy.
+      HTTP_X_FORWARDED_PROTO: "HTTP_X_FORWARDED_PROTO"
+
+      # The port used to connect to the proxy.
+      HTTP_X_FORWARDED_PORT: "HTTP_X_FORWARDED_PORT"
+
+      # Another way for specifying https scheme was used.
+      HTTP_X_FORWARDED_SSL: "HTTP_X_FORWARDED_SSL"
+
+      def body: () -> untyped
+
+      def script_name: () -> untyped
+
+      def script_name=: (untyped s) -> untyped
+
+      def path_info: () -> untyped
+
+      def path_info=: (untyped s) -> untyped
+
+      def request_method: () -> untyped
+
+      def query_string: () -> untyped
+
+      def content_length: () -> untyped
+
+      def logger: () -> untyped
+
+      def user_agent: () -> untyped
+
+      # the referer of the client
+      def referer: () -> untyped
+
+      alias referrer referer
+
+      def session: () -> untyped
+
+      def session_options: () -> untyped
+
+      # Checks the HTTP request method (or verb) to see if it was of type DELETE
+      def delete?: () -> untyped
+
+      # Checks the HTTP request method (or verb) to see if it was of type GET
+      def get?: () -> untyped
+
+      # Checks the HTTP request method (or verb) to see if it was of type HEAD
+      def head?: () -> untyped
+
+      # Checks the HTTP request method (or verb) to see if it was of type OPTIONS
+      def options?: () -> untyped
+
+      # Checks the HTTP request method (or verb) to see if it was of type LINK
+      def link?: () -> untyped
+
+      # Checks the HTTP request method (or verb) to see if it was of type PATCH
+      def patch?: () -> untyped
+
+      # Checks the HTTP request method (or verb) to see if it was of type POST
+      def post?: () -> untyped
+
+      # Checks the HTTP request method (or verb) to see if it was of type PUT
+      def put?: () -> untyped
+
+      # Checks the HTTP request method (or verb) to see if it was of type TRACE
+      def trace?: () -> untyped
+
+      # Checks the HTTP request method (or verb) to see if it was of type UNLINK
+      def unlink?: () -> untyped
+
+      def scheme: () -> ("https" | "https" | untyped)
+
+      # The authority of the incoming request as defined by RFC3976.
+      # https://tools.ietf.org/html/rfc3986#section-3.2
+      #
+      # In HTTP/1, this is the `host` header.
+      # In HTTP/2, this is the `:authority` pseudo-header.
+      def authority: () -> untyped
+
+      # The authority as defined by the `SERVER_NAME` and `SERVER_PORT`
+      # variables.
+      def server_authority: () -> (nil | untyped)
+
+      def server_name: () -> untyped
+
+      def server_port: () -> untyped
+
+      def cookies: () -> untyped
+
+      def content_type: () -> untyped
+
+      def xhr?: () -> untyped
+
+      # The `HTTP_HOST` header.
+      def host_authority: () -> untyped
+
+      def host_with_port: (?untyped authority) -> untyped
+
+      # Returns a formatted host, suitable for being used in a URI.
+      def host: () -> untyped
+
+      # Returns an address suitable for being to resolve to an address.
+      # In the case of a domain name or IPv4 address, the result is the same
+      # as +host+. In the case of IPv6 or future address formats, the square
+      # brackets are removed.
+      def hostname: () -> untyped
+
+      def port: () -> untyped
+
+      def forwarded_for: () -> (untyped | nil)
+
+      def forwarded_port: () -> (untyped | nil)
+
+      def forwarded_authority: () -> (untyped | nil)
+
+      def ssl?: () -> untyped
+
+      def ip: () -> untyped
+
+      # The media type (type/subtype) portion of the CONTENT_TYPE header
+      # without any media type parameters. e.g., when CONTENT_TYPE is
+      # "text/plain;charset=utf-8", the media-type is "text/plain".
+      #
+      # For more information on the use of media types in HTTP, see:
+      # http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.7
+      def media_type: () -> untyped
+
+      # The media type parameters provided in CONTENT_TYPE as a Hash, or
+      # an empty Hash if no CONTENT_TYPE or media-type parameters were
+      # provided.  e.g., when the CONTENT_TYPE is "text/plain;charset=utf-8",
+      # this method responds with the following Hash:
+      #   { 'charset' => 'utf-8' }
+      def media_type_params: () -> untyped
+
+      # The character set of the request body if a "charset" media type
+      # parameter was given, or nil if no "charset" was specified. Note
+      # that, per RFC2616, text/* media types that specify no explicit
+      # charset are to be considered ISO-8859-1.
+      def content_charset: () -> untyped
+
+      # Determine whether the request body contains form-data by checking
+      # the request content-type for one of the media-types:
+      # "application/x-www-form-urlencoded" or "multipart/form-data". The
+      # list of form-data media types can be modified through the
+      # +FORM_DATA_MEDIA_TYPES+ array.
+      #
+      # A request body is also assumed to contain form-data when no
+      # content-type header is provided and the request_method is POST.
+      def form_data?: () -> untyped
+
+      # Determine whether the request body contains data by checking
+      # the request media_type against registered parse-data media-types
+      def parseable_data?: () -> untyped
+
+      # Returns the data received in the query string.
+      def GET: () -> untyped
+
+      # Returns the data received in the request body.
+      #
+      # This method support both application/x-www-form-urlencoded and
+      # multipart/form-data.
+      def POST: () -> untyped
+
+      # The union of GET and POST data.
+      #
+      # Note that modifications will not be persisted in the env. Use update_param or delete_param if you want to destructively modify params.
+      def params: () -> untyped
+
+      # Destructively update a parameter, whether it's in GET and/or POST. Returns nil.
+      #
+      # The parameter is updated wherever it was previous defined, so GET, POST, or both. If it wasn't previously defined, it's inserted into GET.
+      #
+      # <tt>env['rack.input']</tt> is not touched.
+      def update_param: (untyped k, untyped v) -> (nil | untyped)
+
+      # Destructively delete a parameter, whether it's in GET or POST. Returns the value of the deleted parameter.
+      #
+      # If the parameter is in both GET and POST, the POST value takes precedence since that's how #params works.
+      #
+      # <tt>env['rack.input']</tt> is not touched.
+      def delete_param: (untyped k) -> untyped
+
+      def base_url: () -> ::String
+
+      # Tries to return a remake of the original request URL as a string.
+      def url: () -> untyped
+
+      def path: () -> untyped
+
+      def fullpath: () -> (untyped | ::String)
+
+      def accept_encoding: () -> untyped
+
+      def accept_language: () -> untyped
+
+      def trusted_proxy?: (untyped ip) -> untyped
+
+      # shortcut for <tt>request.params[key]</tt>
+      def []: (untyped key) -> untyped
+
+      # shortcut for <tt>request.params[key] = value</tt>
+      #
+      # Note that modifications will not be persisted in the env. Use update_param or delete_param if you want to destructively modify params.
+      def []=: (untyped key, untyped value) -> untyped
+
+      # like Hash#values_at
+      def values_at: (*untyped keys) -> untyped
+
+      private
+
+      def default_session: () -> ::Hash[untyped, untyped]
+
+      # Assist with compatibility when processing `X-Forwarded-For`.
+      def wrap_ipv6: (untyped host) -> (::String | untyped)
+
+      def parse_http_accept_header: (untyped header) -> untyped
+
+      # Get an array of values set in the RFC 7239 `Forwarded` request header.
+      def get_http_forwarded: (untyped token) -> untyped
+
+      def query_parser: () -> untyped
+
+      def parse_query: (untyped qs, ?::String d) -> untyped
+
+      def parse_multipart: () -> untyped
+
+      def expand_param_pairs: (untyped pairs, ?untyped query_parser) -> untyped
+
+      def split_header: (untyped value) -> (untyped | ::Array[untyped])
+
+      AUTHORITY: ::Regexp
+
+      def split_authority: (untyped authority) -> ::Array[untyped]
+
+      def reject_trusted_ip_addresses: (untyped ip_addresses) -> untyped
+
+      FORWARDED_SCHEME_HEADERS: { proto: untyped, scheme: untyped }
+
+      def forwarded_scheme: () -> (untyped | nil)
+
+      def allowed_scheme: (untyped header) -> (untyped | nil)
+
+      def forwarded_priority: () -> untyped
+
+      def x_forwarded_proto_priority: () -> untyped
+    end
+
+    include Env
+
+    include Helpers
+  end
+end
