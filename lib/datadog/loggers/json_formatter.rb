@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require "ddtrace"
-require "logger"
 require "json"
+require "logger"
 
 module Datadog
   module Loggers
@@ -46,14 +46,18 @@ module Datadog
         }
       end
 
-      class HashFormatter
-        def self.format(log_hash, msg)
+      module HashFormatter
+        module_function
+
+        def format(log_hash, msg)
           log_hash.merge!(msg)
         end
       end
 
-      class ExceptionFormatter
-        def self.format(log_hash, exception)
+      module ExceptionFormatter
+        module_function
+
+        def format(log_hash, exception)
           log_hash.merge!(
             exception: exception,
             exception_message: exception.message,
@@ -62,14 +66,18 @@ module Datadog
         end
       end
 
-      class StringFormatter
-        def self.format(log_hash, msg)
+      module StringFormatter
+        module_function
+
+        def format(log_hash, msg)
           log_hash[:message] = msg.dup.force_encoding("utf-8")
         end
       end
 
-      class DefaultFormatter
-        def self.format(log_hash, msg)
+      module DefaultFormatter
+        module_function
+
+        def format(log_hash, msg)
           log_hash[:message] = msg.to_s
         end
       end

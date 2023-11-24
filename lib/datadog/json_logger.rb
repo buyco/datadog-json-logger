@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require "logger"
-require_relative "loggers/version"
 require_relative "loggers/json_formatter"
+require_relative "loggers/version"
 
 module Datadog
   class Error < StandardError; end

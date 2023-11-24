@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email = ["eth3rnit3@gmail.com"]
 
   spec.summary = "Connect your ruby application to Datadog logging and tracing."
-  spec.description = "This gem provides easy integration for connecting a ruby application to Datadog's logging and tracing services." # rubocop:disable Layout/LineLength
+  spec.description = "This gem provides easy integration for connecting a ruby application to Datadog's logging and tracing services."
   spec.homepage = "https://github.com/eth3rnit3/datadog-json_logger"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.0"
@@ -22,17 +22,18 @@ Gem::Specification.new do |spec|
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
-  spec.files = Dir.chdir(__dir__) do
-    `git ls-files -z`.split("\x0").reject do |f|
-      (File.expand_path(f) == __FILE__) ||
-        f.start_with?(*%w[bin/ test/ spec/ features/ .git .circleci appveyor Gemfile])
+  spec.files =
+    Dir.chdir(__dir__) do
+      `git ls-files -z`.split("\x0").reject do |f|
+        (File.expand_path(f) == __FILE__) ||
+          f.start_with?(*%w[bin/ test/ spec/ features/ .git .circleci appveyor Gemfile])
+      end
     end
-  end
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "ddtrace", "~> 1.16.2"
+  spec.add_dependency("ddtrace", "~> 1.16.2")
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

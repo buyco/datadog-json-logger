@@ -1,7 +1,10 @@
 AllCops:
   Exclude:
     - 'sig/**/*'
+    - 'spec/**/*'
+    - 'datadog-json_logger.gemspec'
   NewCops: enable
+  EnabledByDefault: false
   TargetRubyVersion: 3.0
 
 Style/StringLiterals:
