@@ -25,6 +25,9 @@ jobs:
         bundler-cache: true
         cache-version: 1
 
+    - name: Install dependencies
+      run: gem install panolint
+
     - name: Lint and specs
       run: bundle exec rake
 
