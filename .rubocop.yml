@@ -1,4 +1,6 @@
 AllCops:
+  Exclude:
+    - 'sig/**/*'
   NewCops: enable
   TargetRubyVersion: 3.0
 
