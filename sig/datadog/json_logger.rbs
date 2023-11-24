@@ -3,7 +3,7 @@ module Datadog
   end
 
   class JSONLogger < Logger
-    @default_formatter: untyped
+    @default_formatter: singleton(Loggers::JSONFormatter)
 
     def initialize: (?IO | StringIO | File | NilClass output) -> void
 
