@@ -31,5 +31,8 @@ jobs:
     - name: Lint and specs
       run: bundle exec rake
 
+    - name: Rubycritic
+      run: bundle exec rubycritic
+
     - name: Types check
       run: bundle exec steep check
