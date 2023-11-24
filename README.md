@@ -1,6 +1,7 @@
 # Datadog::JSONLogger
 
 [![Rubocop and Rspec](https://github.com/Eth3rnit3/datadog-json_logger/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/Eth3rnit3/datadog-json_logger/actions/workflows/main.yml)
+[![Nexus upload](https://github.com/buyco/datadog-json-logger/actions/workflows/nexus.yml/badge.svg)](https://github.com/buyco/datadog-json-logger/actions/workflows/nexus.yml)
 
 `Datadog::JSONLogger` is a Ruby gem designed to seamlessly integrate Ruby applications with Datadog's logging and tracing services. This gem allows your Ruby application to format its output as JSON, including necessary correlation IDs and other details for optimal Datadog functionality.
 
