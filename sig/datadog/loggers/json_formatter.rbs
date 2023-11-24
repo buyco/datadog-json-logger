@@ -1,0 +1,24 @@
+module Datadog::Loggers
+  class JSONFormatter < Logger::Formatter
+    def self.call: (String severity, Time datetime, String progname, untyped msg) -> String
+    def self.base_log_hash: (String severity, Time datetime, String progname) -> Hash[Symbol, untyped]
+    def self.formatter_for: (untyped msg) -> untyped
+    def self.correlation_hash: () -> Hash[Symbol, untyped]
+
+    class HashFormatter
+      def self.format: (Hash[untyped, untyped] log_hash, Hash[untyped, untyped] msg) -> untyped
+    end
+
+    class ExceptionFormatter
+      def self.format: (Hash[untyped, untyped] log_hash, Exception exception) -> untyped
+    end
+
+    class StringFormatter
+      def self.format: (Hash[untyped, untyped] log_hash, String msg) -> untyped
+    end
+
+    class DefaultFormatter
+      def self.format: (Hash[untyped, untyped] log_hash, untyped msg) -> untyped
+    end
+  end
+end

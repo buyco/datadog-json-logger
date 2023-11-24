@@ -1,6 +1,10 @@
 module Datadog
-  module JSONLogger
-    VERSION: String
-    # See the writing guide of rbs: https://github.com/ruby/rbs#guides
+  class Error < StandardError
+  end
+
+  class JSONLogger < Logger
+    @default_formatter: untyped
+
+    def initialize: (?untyped output) -> void
   end
 end

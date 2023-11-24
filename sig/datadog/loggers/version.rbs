@@ -1,0 +1,3 @@
+module Datadog::Loggers
+  VERSION: String
+end
