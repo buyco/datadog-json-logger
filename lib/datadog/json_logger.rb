@@ -8,10 +8,16 @@ module Datadog
   class Error < StandardError; end
 
   class JSONLogger < Logger
-    def initialize(output = nil)
-      $stdout.sync = true
-      super(output || $stdout)
+    def initialize(output = default_output)
+      super(output)
       @default_formatter = ::Datadog::Loggers::JSONFormatter
+    end
+
+    private
+
+    def default_output
+      $stdout.sync = true
+      $stdout
     end
   end
 end
