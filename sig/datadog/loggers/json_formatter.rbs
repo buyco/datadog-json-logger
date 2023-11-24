@@ -3,26 +3,26 @@ module Datadog
     class JSONFormatter < Logger::Formatter
       def self.call: (String severity, DateTime datetime, String progname, untyped msg) ?{ (untyped) -> untyped } -> ::String
 
-      def self.base_log_hash: (String severity, DateTime datetime, String progname) -> { dd: untyped, timestamp: String, severity: String, progname: String }
+      def self.base_log_hash: (String severity, DateTime datetime, String progname) -> { dd: Hash[untyped, untyped], timestamp: String, severity: String, progname: String }
 
-      def self.formatter_for: ((String | Hash[String, untyped] | Exception) msg) -> untyped
+      def self.formatter_for: ((String | Hash[Symbol, untyped] | Exception) msg) -> untyped
 
       def self.correlation_hash: () -> { trace_id: Integer, span_id: Integer, env: String, service: String, version: String | Integer }
 
       module HashFormatter
-        def self?.format: (untyped log_hash, untyped msg) -> untyped
+        def self?.format: (Hash[Symbol, untyped] log_hash, Hash[untyped, untyped] msg) -> untyped
       end
 
       module ExceptionFormatter
-        def self?.format: (untyped log_hash, untyped exception) -> untyped
+        def self?.format: (Hash[Symbol, untyped] log_hash, Exception exception) -> untyped
       end
 
       module StringFormatter
-        def self?.format: (untyped log_hash, untyped msg) -> untyped
+        def self?.format: (Hash[Symbol, untyped] log_hash, String msg) -> untyped
       end
 
       module DefaultFormatter
-        def self?.format: (untyped log_hash, untyped msg) -> untyped
+        def self?.format: (Hash[Symbol, untyped] log_hash, untyped msg) -> untyped
       end
     end
   end
