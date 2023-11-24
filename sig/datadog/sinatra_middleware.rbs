@@ -8,13 +8,13 @@ module Datadog
   class SinatraMiddleware
     @app: untyped
 
-    @logger: untyped
+    @logger: Logger
 
     attr_reader app: untyped
 
-    attr_reader logger: untyped
+    attr_reader logger: Logger
 
-    def initialize: (untyped app, untyped logger) -> void
+    def initialize: (untyped app, Logger logger) -> void
 
     def call: (untyped env) -> untyped
 
@@ -22,12 +22,12 @@ module Datadog
 
     def safely_process_request: (untyped env) -> untyped
 
-    def log_request: (untyped request, untyped env, untyped status, untyped headers, untyped start_time, untyped end_time) -> untyped
+    def log_request: (Rack::Request request, untyped env, String status, Hash[String, String] headers, Time start_time, Time end_time) -> untyped
 
-    def calculate_duration: (untyped start_time, untyped end_time) -> untyped
+    def calculate_duration: (Time start_time, Time end_time) -> Integer
 
-    def parse_query: (untyped query_string) -> untyped
+    def parse_query: (String query_string) -> Hash[String, String]
 
-    def handle_exception: (untyped exception) -> untyped
+    def handle_exception: (Exception exception) -> Exception
   end
 end
