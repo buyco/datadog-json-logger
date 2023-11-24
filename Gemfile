@@ -19,6 +19,7 @@ group :development do
 end
 
 group :test do
+  gem "panolint", "~> 0.1.6"
   gem "rack-test", "~> 2.1"
   gem "rspec", "~> 3.0"
 end
