@@ -1,7 +1,6 @@
 AllCops:
   Exclude:
     - 'sig/**/*'
-    - 'spec/**/*'
     - 'datadog-json_logger.gemspec'
     - 'vendor/**/*'
   NewCops: enable
