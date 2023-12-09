@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "uri"
 require "json"
+require "uri"
 
 module Rack
   class CommonLogger
@@ -40,7 +40,7 @@ module Datadog
     def safely_process_request(env)
       app.call(env)
     rescue StandardError
-      [500, { "Content-Type" => "text/html" }, ["Internal Server Error"]]
+      [500, { "Content-Type": "text/html" }, ["Internal Server Error"]]
     end
 
     def log_request(request, env, status, headers, start_time, end_time)
@@ -75,7 +75,7 @@ module Datadog
         exception_backtrace: exception.backtrace
       )
 
-      raise exception
+      raise(exception)
     end
   end
 end

@@ -1,0 +1,33 @@
+module Rack
+  class CommonLogger
+    def log: (untyped _env, untyped _status, untyped _response_headers, untyped _began_at) -> nil
+  end
+end
+
+module Datadog
+  class SinatraMiddleware
+    @app: untyped
+
+    @logger: Logger
+
+    attr_reader app: untyped
+
+    attr_reader logger: Logger
+
+    def initialize: (untyped app, Logger logger) -> void
+
+    def call: (untyped env) -> untyped
+
+    private
+
+    def safely_process_request: (untyped env) -> untyped
+
+    def log_request: (Rack::Request request, untyped env, String status, Hash[String, String] headers, Time start_time, Time end_time) -> untyped
+
+    def calculate_duration: (Time start_time, Time end_time) -> Integer
+
+    def parse_query: (String query_string) -> Hash[String, String]
+
+    def handle_exception: (Exception exception) -> Exception
+  end
+end

@@ -11,3 +11,4 @@
 .rspec*
 .byebug*
 *.gem
+.DS_STORE

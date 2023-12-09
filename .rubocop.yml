@@ -1,4 +1,8 @@
 AllCops:
+  Exclude:
+    - 'sig/**/*'
+    - 'datadog-json_logger.gemspec'
+    - 'vendor/**/*'
   NewCops: enable
   TargetRubyVersion: 3.0
 
