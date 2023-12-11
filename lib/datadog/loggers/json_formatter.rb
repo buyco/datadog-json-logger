@@ -14,7 +14,7 @@ module Datadog
 
         yield(log_hash) if block_given?
 
-        "#{log_hash.to_json}\r\n"
+        "#{::JSON.dump(log_hash)}\n"
       end
 
       def self.base_log_hash(severity, datetime, progname)
@@ -59,9 +59,12 @@ module Datadog
 
         def format(log_hash, exception)
           log_hash.merge!(
-            exception: exception,
-            exception_message: exception.message,
-            exception_backtrace: exception.backtrace
+            message: exception.inspect,
+            error: {
+              kind: exception.class,
+              message: exception.message,
+              stack: (exception.backtrace || []).join("\n")
+            }
           )
         end
       end
@@ -78,7 +81,7 @@ module Datadog
         module_function
 
         def format(log_hash, msg)
-          log_hash[:message] = msg.to_s
+          log_hash[:message] = msg.is_a?(String) ? msg : msg.inspect
         end
       end
     end
