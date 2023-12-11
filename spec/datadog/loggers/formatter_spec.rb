@@ -42,8 +42,8 @@ RSpec.describe Datadog::Loggers::JSONFormatter do
       let(:exception) { StandardError.new("error message") }
       let(:result) { described_class.call(severity, datetime, progname, exception) }
 
-      it { expect(json).to include("exception_message" => "error message") }
-      it { expect(json).to include("exception_backtrace") }
+      it { expect(json["error"]).to include("kind" => "StandardError", "message" => "error message") }
+      it { expect(json["error"]).to include("stack") }
 
       it { expect(json).to include("dd", "progname", "severity", "timestamp") }
       it { expect(json["dd"]).to include("env", "service", "span_id", "trace_id", "version") }
