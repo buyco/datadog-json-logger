@@ -87,10 +87,12 @@ use Datadog::SinatraMiddleware, logger
 ```
 
 ## Features
-|Feature|Link|Compatibility|
-|JSON correlated logging|[Ruby Collection](https://docs.datadoghq.com/logs/log_collection/ruby/?tab=lograge)|✅|
-|Tracing|[Ruby Tracing application](https://docs.datadoghq.com/tracing/trace_collection/dd_libraries/ruby)|✅|
-|Error Tracking|[Datadog error tracking](https://www.datadoghq.com/product/error-tracking)|✅|
+| Feature                 | Link                                            | Compatibility |
+|-------------------------|-------------------------------------------------|---------------|
+| JSON correlated logging | [Ruby Collection](https://docs.datadoghq.com/logs/log_collection/ruby/?tab=lograge) | ✅             |
+| Tracing                 | [Ruby Tracing application](https://docs.datadoghq.com/tracing/trace_collection/dd_libraries/ruby) | ✅             |
+| Error Tracking          | [Datadog error tracking](https://www.datadoghq.com/product/error-tracking) | ✅             |
+
 
 ## Development
 
