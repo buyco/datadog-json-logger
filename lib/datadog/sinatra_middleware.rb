@@ -16,16 +16,21 @@ module Datadog
   class SinatraMiddleware
     attr_reader :app, :logger
 
-    def initialize(app, logger)
+    def initialize(app, logger, opt = {})
       @app = app
       @logger = logger
+      @raise_exceptions = opt.fetch(:raise_exceptions, true)
     end
 
     def call(env)
       request = Rack::Request.new(env)
       start_time = Time.now
 
-      status, headers, body = safely_process_request(env)
+      status, headers, body = if @raise_exceptions
+                                app.call(env)
+                              else
+                                safely_process_request(env)
+                              end
       end_time = Time.now
 
       log_request(request, env, status, headers, start_time, end_time)
@@ -39,8 +44,8 @@ module Datadog
 
     def safely_process_request(env)
       app.call(env)
-    rescue StandardError
-      [500, { "Content-Type": "text/html" }, ["Internal Server Error"]]
+    rescue StandardError => e
+      [500, { "Content-Type": "application/json" }, [e.class.name, e.message].join(": ")]
     end
 
     def log_request(request, env, status, headers, start_time, end_time)
