@@ -19,7 +19,7 @@ module Datadog
     def initialize(app, logger, opt = {})
       @app = app
       @logger = logger
-      @raise_exceptions = opt.fetch(:raise_exceptions, true)
+      @raise_exceptions = opt.fetch(:raise_exceptions, false)
     end
 
     def call(env)
