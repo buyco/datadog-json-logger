@@ -13,6 +13,7 @@ RSpec.describe Datadog::SinatraMiddleware do
 
   before do
     allow(logger).to receive(:info)
+    allow(logger).to receive(:error)
   end
 
   describe "#call" do
@@ -80,6 +81,26 @@ RSpec.describe Datadog::SinatraMiddleware do
       it "logs redirect status code" do
         middleware.call(env)
         expect(logger).to have_received(:info).with(hash_including(status: 302))
+      end
+    end
+
+    context "when raise_exceptions is set to true" do
+      let(:middleware) { described_class.new(app, logger, raise_exceptions: true) }
+      let(:app) { ->(_env) { raise StandardError, "Something went wrong" } }
+
+      it "re-raises exceptions" do
+        expect { middleware.call(Rack::MockRequest.env_for("/test", method: "GET")) }
+          .to raise_error(StandardError, "Something went wrong")
+      end
+    end
+
+    context "when raise_exceptions is set to false" do
+      let(:middleware) { described_class.new(app, logger, raise_exceptions: false) }
+      let(:app) { ->(_env) { raise StandardError, "Something went wrong" } }
+
+      it "handles exceptions without re-raising" do
+        expect { middleware.call(Rack::MockRequest.env_for("/test", method: "GET")) }
+          .not_to raise_error
       end
     end
   end

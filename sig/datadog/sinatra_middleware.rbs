@@ -7,14 +7,13 @@ end
 module Datadog
   class SinatraMiddleware
     @app: untyped
-
     @logger: Logger
+    @raise_exceptions: bool
 
     attr_reader app: untyped
-
     attr_reader logger: Logger
 
-    def initialize: (untyped app, Logger logger) -> void
+    def initialize: (untyped app, Logger logger, ?Hash[Symbol, untyped] opt) -> void
 
     def call: (untyped env) -> untyped
 
