@@ -16,6 +16,13 @@ Gem::Specification.new do |spec|
 
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
 
+  if ENV.fetch('GEM_PUSHER', 'default') == 'github'
+    spec.metadata['allowed_push_host'] = 'https://rubygems.pkg.github.com/buyco'
+  else
+    spec.metadata['allowed_push_host'] = 'https://rubygems.org'
+  end
+
+
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/eth3rnit3/datadog-json_logger"
   spec.metadata["changelog_uri"] = "https://github.com/eth3rnit3/datadog-json_logger/blob/main/CHANGELOG.md"
