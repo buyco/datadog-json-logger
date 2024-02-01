@@ -19,21 +19,31 @@ RSpec.describe Datadog::SinatraMiddleware do
   describe "#call" do
     context "when making a GET request" do
       let(:env) { Rack::MockRequest.env_for("/test?foo=bar", method: "GET") }
+      let(:message) do
+        "Received GET request from  to # at /test with params {\"foo\":\"bar\"}. " \
+          "Responded with status 200 in 0ms. Content-Type: text/html."
+      end
 
       it "logs GET requests" do
         middleware.call(env)
         expect(logger).to have_received(:info).with(hash_including(method: "GET"))
+        expect(logger).to have_received(:info).with(hash_including(message: message))
       end
     end
 
     context "when making a POST request" do
       let(:env) { Rack::MockRequest.env_for("/test", method: "POST", params: { foo: "bar" }) }
+      let(:message) do
+        "Received POST request from  to # at /test with params {}. " \
+          "Responded with status 200 in 0ms. Content-Type: text/html."
+      end
 
       it "logs POST requests with parameters" do
         middleware.call(env)
         expect(logger).to have_received(:info)
           .with(hash_including(method: "POST"))
           .with(hash_not_including(params: { "foo" => "bar" }))
+        expect(logger).to have_received(:info).with(hash_including(message: message))
       end
     end
 
