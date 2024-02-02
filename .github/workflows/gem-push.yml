@@ -1,7 +1,8 @@
 name: Publish on RubyGems
 
 on:
-  push:
+  release:
+    types: [published]
 
 jobs:
   build:
@@ -36,3 +37,12 @@ jobs:
         GEM_HOST_API_KEY: "Bearer ${{secrets.BUYCO_ORGANIZATION_REPOSITORIES_TOKEN}}"
         OWNER: ${{ github.repository_owner }}
         GEM_PUSHER: github
+
+    - name: Publish to NEXUS
+      run: |
+        gem build datadog-json_logger.gemspec
+        docker build -t nexus-uploader -f Dockerfile.nexus .
+        docker run -e NEXUS_DEPLOY_URL -e NEXUS_CREDENTIALS nexus-uploader
+      env:
+        NEXUS_DEPLOY_URL: ${{ secrets.NEXUS_DEPLOY_URL }}
+        NEXUS_CREDENTIALS: ${{ secrets.NEXUS_CREDENTIALS }}
