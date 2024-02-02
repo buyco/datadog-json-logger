@@ -54,6 +54,7 @@ module Datadog
         request_ip: request.ip,
         method: request.request_method,
         controller: env["sinatra.controller_name"],
+        resource: env["sinatra.resource_name"] || env["sinatra.controller_name"],
         action: env["sinatra.action_name"],
         path: request.path,
         params: parse_query(request.query_string),
@@ -62,7 +63,16 @@ module Datadog
         duration: calculate_duration(start_time, end_time)
       }
 
+      log_data[:message] = message(log_data)
+
       logger.info(log_data)
+    end
+
+    def message(log_data)
+      "Received #{log_data[:method]} request from #{log_data[:request_ip]} " \
+        "to #{log_data[:controller]}##{log_data[:action]} at #{log_data[:path]} " \
+        "with params #{log_data[:params].to_json}. Responded with status #{log_data[:status]} " \
+        "in #{log_data[:duration]}ms. Content-Type: #{log_data[:format]}."
     end
 
     def calculate_duration(start_time, end_time)
