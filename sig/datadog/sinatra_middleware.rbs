@@ -22,6 +22,8 @@ module Datadog
     def safely_process_request: (untyped env) -> untyped
 
     def log_request: (Rack::Request request, untyped env, String status, Hash[String, String] headers, Time start_time, Time end_time) -> untyped
+                   
+    def message: (Hash[Symbol, untyped] log_data) -> String
 
     def calculate_duration: (Time start_time, Time end_time) -> Integer
 
