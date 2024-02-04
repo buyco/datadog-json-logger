@@ -1,7 +1,8 @@
 # Datadog::JSONLogger
 
-[![Rubocop and Rspec](https://github.com/Eth3rnit3/datadog-json_logger/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/Eth3rnit3/datadog-json_logger/actions/workflows/main.yml)
-[![Nexus upload](https://github.com/buyco/datadog-json-logger/actions/workflows/nexus.yml/badge.svg)](https://github.com/buyco/datadog-json-logger/actions/workflows/nexus.yml)
+[![CodeQL](https://github.com/buyco/datadog-json-logger/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/buyco/datadog-json-logger/actions/workflows/github-code-scanning/codeql)
+[![Rubocop and Rspec](https://github.com/buyco/datadog-json-logger/actions/workflows/main.yml/badge.svg)](https://github.com/buyco/datadog-json-logger/actions/workflows/main.yml)
+[![Publish on RubyGems](https://github.com/buyco/datadog-json-logger/actions/workflows/gem-push.yml/badge.svg)](https://github.com/buyco/datadog-json-logger/actions/workflows/gem-push.yml)
 
 `Datadog::JSONLogger` is a Ruby gem designed to seamlessly integrate Ruby applications with Datadog's logging and tracing services. This gem allows your Ruby application to format its output as JSON, including necessary correlation IDs and other details for optimal Datadog functionality.
 
@@ -102,9 +103,9 @@ To install this gem onto your local machine, run `bundle exec rake install`.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/eth3rnit3/datadog-json_logger. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/eth3rnit3/datadog-json_logger/blob/main/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/buyco/datadog-json-logger. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/buyco/datadog-json-logger/blob/main/CODE_OF_CONDUCT.md).
 
-1. Fork the repository (https://github.com/eth3rnit3/datadog-json_logger/fork)
+1. Fork the repository (https://github.com/buyco/datadog-json-logger/fork)
 2. Create your feature branch (`git checkout -b feature/my_feature`)
 3. Commit your changes (`git commit -am 'Add a new feature'`)
 4. Push the branch (`git push origin feature/my_feature`)
@@ -116,4 +117,4 @@ This gem is available as open source under the terms of the [MIT License](https:
 
 ## Code of Conduct
 
-Everyone interacting in the Datadog::JSONLogger project's codebases, issue trackers, chat rooms, and mailing lists is expected to follow the [code of conduct](https://github.com/eth3rnit3/datadog-json_logger/blob/main/CODE_OF_CONDUCT.md).
+Everyone interacting in the Datadog::JSONLogger project's codebases, issue trackers, chat rooms, and mailing lists is expected to follow the [code of conduct](https://github.com/buyco/datadog-json-logger/blob/main/CODE_OF_CONDUCT.md).

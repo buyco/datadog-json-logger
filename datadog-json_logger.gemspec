@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.summary = "Connect your ruby application to Datadog logging and tracing."
   spec.description = "This gem provides easy integration for connecting a ruby application to Datadog's logging and tracing services."
-  spec.homepage = "https://github.com/eth3rnit3/datadog-json_logger"
+  spec.homepage = "https://github.com/buyco/datadog-json-logger"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.0"
 
@@ -24,8 +24,8 @@ Gem::Specification.new do |spec|
 
 
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/eth3rnit3/datadog-json_logger"
-  spec.metadata["changelog_uri"] = "https://github.com/eth3rnit3/datadog-json_logger/blob/main/CHANGELOG.md"
+  spec.metadata["source_code_uri"] = "https://github.com/buyco/datadog-json-logger"
+  spec.metadata["changelog_uri"] = "https://github.com/buyco/datadog-json-logger/blob/main/CHANGELOG.md"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
