@@ -5,7 +5,9 @@ module Datadog
   class JSONLogger < Logger
     @default_formatter: singleton(Loggers::JSONFormatter)
 
+    def self.configure: () -> yield(JSONLoggerConfiguration) -> void
     def initialize: (?IO | StringIO | File | NilClass output) -> void
+    def config: () -> JSONLoggerConfiguration
 
     private
 

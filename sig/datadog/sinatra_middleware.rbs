@@ -31,6 +31,8 @@ module Datadog
 
     def handle_exception: (Exception exception) -> Exception
                         
+    def config: () -> Datadog::Configuration
+                        
     def aggregate_tags: (Hash[Symbol, untyped] log_data) -> Hash[String, String]
                       
     def current_user: (untyped env) -> Hash[String, String]
