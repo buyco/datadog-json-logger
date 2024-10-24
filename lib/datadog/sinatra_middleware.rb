@@ -51,16 +51,11 @@ module Datadog
     def log_request(request, env, status, headers, start_time, end_time)
       log_data = {
         request: true,
-        request_ip: request.ip,
-        method: request.request_method,
-        controller: env["sinatra.controller_name"],
-        resource: env["sinatra.resource_name"] || env["sinatra.controller_name"],
-        action: env["sinatra.action_name"],
-        path: request.path,
         params: parse_query(request.query_string),
         status: status,
         format: headers["Content-Type"],
         duration: calculate_duration(start_time, end_time),
+        **aggregate_logs(request, env),
         **current_user(env)
       }
 
@@ -94,8 +89,23 @@ module Datadog
       raise(exception)
     end
 
+    def config
+      @logger.config
+    end
+
+    def aggregate_logs(request, env)
+      hash = {}
+      hash[:request_ip]   = request.ip
+      hash[:method]       = request.request_method
+      hash[:path]         = request.path
+      hash[:controller]   = env[config.controller_key.to_s] if config.controller_key
+      hash[:action]       = env[config.action_key.to_s] if config.action_key
+      hash[:resource]     = env[config.resource_key.to_s] if config.resource_key
+
+      hash
+    end
+
     def current_user(env)
-      config = @logger.config
       return {} unless config.log_current_user?
 
       {

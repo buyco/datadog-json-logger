@@ -30,5 +30,9 @@ module Datadog
     def parse_query: (String query_string) -> Hash[String, String]
 
     def handle_exception: (Exception exception) -> Exception
+                        
+    def aggregate_tags: (Hash[Symbol, untyped] log_data) -> Hash[String, String]
+                      
+    def current_user: (untyped env) -> Hash[String, String]
   end
 end

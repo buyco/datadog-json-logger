@@ -40,6 +40,13 @@ gem install datadog-json_logger
 # Example in Sinatra (app.rb)
 require 'datadog/json_logger'
 
+Datadog::JSONLogger.configure do |config|
+  config.current_user = ->(env) { { email: env['warned'].user.email } } # Log user on each request
+  config.controller_key = "sinatra.controller_name"
+  config.resource_key   = "sinatra.resource_name"
+  config.action_key     = "sinatra.action_name"
+end
+
 def logger
   @logger ||= Datadog::JSONLogger.new
 end

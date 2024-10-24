@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    datadog-json_logger (0.1.5)
+    datadog-json_logger (0.1.6)
       ddtrace (>= 1.16)
 
 GEM
