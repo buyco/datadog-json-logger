@@ -60,7 +60,8 @@ module Datadog
         params: parse_query(request.query_string),
         status: status,
         format: headers["Content-Type"],
-        duration: calculate_duration(start_time, end_time)
+        duration: calculate_duration(start_time, end_time),
+        **current_user(env)
       }
 
       log_data[:message] = message(log_data)
@@ -91,6 +92,15 @@ module Datadog
       )
 
       raise(exception)
+    end
+
+    def current_user(env)
+      config = @logger.config
+      return {} unless config.log_current_user?
+
+      {
+        user: config.current_user.call(env)
+      }
     end
   end
 end
