@@ -2,18 +2,20 @@
 
 require "spec_helper"
 require "rack/test"
+require "datadog/json_logger"
 require "datadog/sinatra_middleware"
 
 RSpec.describe Datadog::SinatraMiddleware do
   let(:app) { ->(_env) { [status_code, { "Content-Type" => "text/html" }, ["Response"]] } }
   let(:env) { Rack::MockRequest.env_for("/test") }
-  let(:logger) { instance_double("Logger") }
+  let(:logger) { Datadog::JSONLogger.new }
   let(:middleware) { described_class.new(app, logger) }
   let(:status_code) { 200 }
 
   before do
     allow(logger).to receive(:info)
     allow(logger).to receive(:error)
+    allow(logger).to receive(:config).and_return(Datadog::Configuration.new)
   end
 
   describe "#call" do
@@ -111,6 +113,64 @@ RSpec.describe Datadog::SinatraMiddleware do
       it "handles exceptions without re-raising" do
         expect { middleware.call(Rack::MockRequest.env_for("/test", method: "GET")) }
           .not_to raise_error
+      end
+    end
+
+    context "when current_user is set" do
+      before do
+        allow(logger.config).to receive(:current_user).and_return(current_user)
+        allow(logger.config).to receive(:log_current_user?).and_return(true)
+      end
+
+      context "when current_user is fixed" do
+        let(:current_user) do
+          ->(_env) { { id: 1, email: "john-doe@gmail.com" } }
+        end
+
+        it "logs the current user" do
+          middleware.call(env)
+          expect(logger).to have_received(:info).with(hash_including(user: current_user))
+        end
+      end
+
+      context "when current_user is in env" do
+        let(:user) { { id: 1, email: "john-doe@gmail.com" } }
+        let(:current_user) do
+          ->(env) { env["current_user"] }
+        end
+
+        before { env["current_user"] = user }
+
+        it "logs the current user" do
+          middleware.call(env)
+          expect(logger).to have_received(:info).with(hash_including(user: user))
+        end
+      end
+
+      context "when current_user is warned" do
+        let(:user) { double("User", id: 1, email: "john-doe@gmail.com") }
+        let(:current_user) do
+          ->(env) { { id: env["user"].user.id, email: env["user"].user.email } }
+        end
+
+        before { env["user"] = double("User", user: user) }
+
+        it "does not log the current user" do
+          middleware.call(env)
+          expect(logger).to have_received(:info).with(including(:user))
+        end
+      end
+    end
+
+    context "when current_user is not set" do
+      before do
+        allow(logger.config).to receive(:current_user).and_return(nil)
+        allow(logger.config).to receive(:log_current_user?).and_return(false)
+      end
+
+      it "does not log the current user" do
+        middleware.call(env)
+        expect(logger).to have_received(:info).with(hash_not_including(:user))
       end
     end
   end

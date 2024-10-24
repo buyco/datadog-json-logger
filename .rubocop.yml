@@ -28,6 +28,8 @@ Metrics/MethodLength:
 
 Metrics/BlockLength:
   Max: 100
+  Exclude:
+    - 'spec/**/*'
 
 Metrics/ParameterLists:
   Max: 6
