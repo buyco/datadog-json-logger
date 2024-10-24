@@ -16,7 +16,7 @@ module Datadog
     end
 
     def log_current_user?
-      @current_user
+      @current_user ? true : false
     end
   end
 end

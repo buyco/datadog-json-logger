@@ -15,7 +15,6 @@ group :development do
   gem "rubocop-rake", "~> 0.6.0"
   gem "rubocop-rspec", "~> 2.25.0"
   gem "rubycritic", "~> 4.9.0"
-  gem "steep", "~> 1.6.0"
 end
 
 group :test do

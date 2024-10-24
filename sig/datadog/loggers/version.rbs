@@ -1,5 +1,0 @@
-module Datadog
-  module Loggers
-    VERSION: String
-  end
-end
