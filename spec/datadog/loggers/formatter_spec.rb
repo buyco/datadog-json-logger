@@ -58,6 +58,66 @@ RSpec.describe Datadog::Loggers::JSONFormatter do
       it { expect(json).to include("dd", "progname", "severity", "timestamp") }
       it { expect(json["dd"]).to include("env", "service", "span_id", "trace_id", "version") }
     end
+
+    context "when message is nil" do
+      let(:result) { described_class.call(severity, datetime, progname, nil) }
+
+      it { expect(json).to include("message" => "nil") }
+
+      it { expect(json).to include("dd", "progname", "severity", "timestamp") }
+      it { expect(json["dd"]).to include("env", "service", "span_id", "trace_id", "version") }
+    end
+
+    context "when message is a lambda" do
+      let(:result) { described_class.call(severity, datetime, progname, -> { "Test message" }) }
+
+      it { expect(json).to include("message" => "Test message") }
+
+      it { expect(json).to include("dd", "progname", "severity", "timestamp") }
+      it { expect(json["dd"]).to include("env", "service", "span_id", "trace_id", "version") }
+    end
+
+    context "when message is a proc" do
+      let(:result) { described_class.call(severity, datetime, progname, proc { "Test message" }) }
+
+      it { expect(json).to include("message" => "Test message") }
+
+      it { expect(json).to include("dd", "progname", "severity", "timestamp") }
+      it { expect(json["dd"]).to include("env", "service", "span_id", "trace_id", "version") }
+    end
+
+    context "when custom_context is enabled" do
+      before { Datadog::JSONLogger.config.custom_context = -> { { custom_key: "custom_value" } } }
+
+      let(:result) { described_class.call(severity, datetime, progname, "Test message") }
+
+      it { expect(json).to include("custom_key" => "custom_value") }
+
+      it { expect(json).to include("dd", "progname", "severity", "timestamp") }
+      it { expect(json["dd"]).to include("env", "service", "span_id", "trace_id", "version") }
+    end
+
+    context "when custom_context is disabled" do
+      before { Datadog::JSONLogger.config.custom_context = nil }
+
+      let(:result) { described_class.call(severity, datetime, progname, "Test message") }
+
+      it { expect(json).not_to include("custom_key" => "custom_value") }
+
+      it { expect(json).to include("dd", "progname", "severity", "timestamp") }
+      it { expect(json["dd"]).to include("env", "service", "span_id", "trace_id", "version") }
+    end
+
+    context "when custom_context is not a proc" do
+      before { Datadog::JSONLogger.config.custom_context = { custom_key: "custom_value" } }
+
+      let(:result) { described_class.call(severity, datetime, progname, "Test message") }
+
+      it { expect(json).not_to include("custom_key" => "custom_value") }
+
+      it { expect(json).to include("dd", "progname", "severity", "timestamp") }
+      it { expect(json["dd"]).to include("env", "service", "span_id", "trace_id", "version") }
+    end
   end
 
   describe "class inheritance" do

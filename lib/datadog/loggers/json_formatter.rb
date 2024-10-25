@@ -22,8 +22,16 @@ module Datadog
           dd: correlation_hash,
           timestamp: datetime.to_s,
           severity: severity.ljust(5).to_s,
-          progname: progname.to_s
+          progname: progname.to_s,
+          **custom_context
         }
+      end
+
+      def self.custom_context
+        context = Datadog::JSONLogger.config.custom_context
+        return {} unless context.respond_to?(:call)
+
+        context.call
       end
 
       def self.formatter_for(msg)
@@ -31,6 +39,7 @@ module Datadog
         when Hash then HashFormatter
         when Exception then ExceptionFormatter
         when String then StringFormatter
+        when Proc then ProcFormatter
         else DefaultFormatter
         end
       end
@@ -74,6 +83,14 @@ module Datadog
 
         def format(log_hash, msg)
           log_hash[:message] = msg.dup.force_encoding("utf-8")
+        end
+      end
+
+      module ProcFormatter
+        module_function
+
+        def format(log_hash, msg)
+          log_hash[:message] = msg.call
         end
       end
 
