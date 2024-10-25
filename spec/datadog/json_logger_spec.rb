@@ -23,4 +23,20 @@ RSpec.describe Datadog::JSONLogger do
 
     it { expect(log).to include("message" => "Test message") }
   end
+
+  describe "#config" do
+    it "returns the configuration" do
+      expect(described_class.config).to be_a(Datadog::Configuration)
+    end
+  end
+
+  describe "#configure" do
+    it "configures the logger" do
+      described_class.configure do |config|
+        config.current_user = ->(_env) { "test" }
+      end
+
+      expect(described_class.config.current_user).to be_a(Proc)
+    end
+  end
 end

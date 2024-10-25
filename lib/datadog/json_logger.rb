@@ -9,15 +9,16 @@ module Datadog
   class Error < StandardError; end
 
   class JSONLogger < Logger
-    attr_accessor :config
-
     def initialize(output = default_output)
       super
       @default_formatter = ::Datadog::Loggers::JSONFormatter
     end
 
+    def self.config
+      @config ||= Configuration.new
+    end
+
     def self.configure
-      self.config ||= Configuration.new
       yield(config)
     end
 
