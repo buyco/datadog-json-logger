@@ -4,8 +4,9 @@ module Datadog
   class Configuration
     attr_accessor :current_user, :custom_context, :controller_key, :resource_key, :action_key
 
-    # @param current_user [Lambda] A lambda that returns the current user
-    # e.g. ->(env) { env["current_user"] }
+    # @param current_user [Proc] A proc that returns the current user
+    # e.g. ->(env) { env["current_user"] } # Current user is logged on each rack log if set
+
     # @param custom_context [Proc] A proc that returns a hash of custom context
     # @param controller_key [String] The key to use for the controller name in the log
     # @param resource_key [String] The key to use for the resource name in the log
