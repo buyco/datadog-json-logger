@@ -66,9 +66,9 @@ module Datadog
 
     def message(log_data)
       "Received #{log_data[:method]} request from #{log_data[:request_ip]} " \
-        "to #{log_data[:controller]}##{log_data[:action]} at #{log_data[:path]} " \
-        "with params #{log_data[:params].to_json}. Responded with status #{log_data[:status]} " \
-        "in #{log_data[:duration]}ms. Content-Type: #{log_data[:format]}."
+        "at #{log_data[:path]} " \
+        "Responded with status #{log_data[:status]} " \
+        "in #{log_data[:duration]}ms."
     end
 
     def calculate_duration(start_time, end_time)
