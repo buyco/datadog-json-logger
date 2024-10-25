@@ -22,6 +22,10 @@ module Datadog
       yield(config)
     end
 
+    def config
+      self.class.config
+    end
+
     private
 
     def default_output
