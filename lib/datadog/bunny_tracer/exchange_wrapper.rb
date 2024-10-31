@@ -12,16 +12,15 @@ module Datadog
 
       def publish(payload, routing_key: "", **opts)
         Datadog::Tracing.trace("rabbitmq.publish", service: @service_name, resource: @exchange.name) do |span|
-          # Ajouter des tags standards
           span.set_tag("messaging.system", "rabbitmq")
           span.set_tag("messaging.destination", @exchange.name)
           span.set_tag("messaging.destination_kind", "exchange")
           span.set_tag("messaging.routing_key", routing_key)
 
-          # Injecter le contexte de trace
           trace_context = {
-            "trace_id" => span.trace_id,
-            "parent_id" => span.id
+            trace_id: span.trace_id,
+            span_id: span.id,
+            parent_id: span.parent_id
           }
 
           headers = (opts[:headers] || {}).merge(

@@ -13,16 +13,14 @@ module Datadog
       def subscribe(**opts, &block)
         @queue.subscribe(**opts) do |delivery_info, properties, payload|
           Datadog::Tracing.trace("rabbitmq.consume", service: @service_name, resource: @queue.name) do |span|
-            # Ajouter des tags standards pour RabbitMQ
             span.set_tag("messaging.system", "rabbitmq")
             span.set_tag("messaging.destination", @queue.name)
             span.set_tag("messaging.destination_kind", "queue")
 
-            # Extraire et lier le contexte de trace des headers si présent
             if properties.headers && properties.headers["x-datadog-trace-context"]
-              trace_context = JSON.parse(properties.headers["x-datadog-trace-context"])
-              span.trace_id = trace_context["trace_id"]
-              span.parent_id = trace_context["parent_id"]
+              trace_context = JSON.parse(properties.headers["x-datadog-trace-context"], symbolize_names: true)
+              trace_digest = Datadog::Tracing::TraceDigest.new(**trace_context)
+              Datadog::Tracing.continue_trace!(trace_digest) if trace_digest
             end
 
             begin
@@ -37,15 +35,14 @@ module Datadog
 
       def publish(payload, **opts)
         Datadog::Tracing.trace("rabbitmq.publish", service: @service_name, resource: @queue.name) do |span|
-          # Ajouter des tags standards
           span.set_tag("messaging.system", "rabbitmq")
           span.set_tag("messaging.destination", @queue.name)
           span.set_tag("messaging.destination_kind", "queue")
 
-          # Injecter le contexte de trace dans les headers
           trace_context = {
-            "trace_id" => span.trace_id,
-            "parent_id" => span.id
+            trace_id: span.trace_id,
+            span_id: span.id,
+            parent_id: span.parent_id
           }
 
           headers = (opts[:headers] || {}).merge(
