@@ -13,7 +13,7 @@ module Rack
 end
 
 module Datadog
-  class SinatraMiddleware
+  class RackMiddleware
     attr_reader :app, :logger
 
     def initialize(app, logger, opt = {})
