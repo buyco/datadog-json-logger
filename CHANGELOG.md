@@ -1,4 +1,10 @@
-## v0.2.0 (2024-02-02)
+## v0.2.1 (2024-12-10)
+
+### Changes:
+
+- Rename `user` to `usr` for `current_user` Proc ([`f4de214`](https://github.com/buyco/datadog-json-logger/commit/f4de2145cfe3f730c1d50e8bee29c806cc9979d7)) (by Eth3rnit3)
+
+## v0.2.0 (2024-12-10)
 
 ### New feature:
 

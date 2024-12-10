@@ -109,7 +109,7 @@ module Datadog
       return {} unless config.log_current_user?
 
       {
-        user: config.current_user.call(env)
+        usr: config.current_user.call(env)
       }
     end
   end
