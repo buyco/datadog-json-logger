@@ -2,11 +2,11 @@
 
 ### New feature:
 
-- Add support for RackMiddleware ([`2e8e49e`](https://github.com/buyco/datadog-json-logger/commit/2e8e49e37903de85858a1ffa54f52ee8a145592c)) (by Eth3rnit3)
+- Add support for RackMiddleware ([`2e8e49e`](https://github.com/buyco/datadog-json-logger/commit/0bcaf99a7ca6082434ee5fbccee00d46a15813af)) (by Eth3rnit3)
 
 ### Breaking change:
 
-- Rename SinatraMiddleware to RackMiddleware ([`2e8e49e`](https://github.com/buyco/datadog-json-logger/commit/2e8e49e37903de85858a1ffa54f52ee8a145592c)) (by Eth3rnit3)
+- Rename SinatraMiddleware to RackMiddleware ([`2e8e49e`](https://github.com/buyco/datadog-json-logger/commit/0bcaf99a7ca6082434ee5fbccee00d46a15813af)) (by Eth3rnit3)
 
 ## v0.1.5 (2024-02-02)
 
