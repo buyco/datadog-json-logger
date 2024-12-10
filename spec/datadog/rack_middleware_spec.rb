@@ -3,9 +3,9 @@
 require "spec_helper"
 require "rack/test"
 require "datadog/json_logger"
-require "datadog/sinatra_middleware"
+require "datadog/rack_middleware"
 
-RSpec.describe Datadog::SinatraMiddleware do
+RSpec.describe Datadog::RackMiddleware do
   let(:app) { ->(_env) { [status_code, { "Content-Type" => "text/html" }, ["Response"]] } }
   let(:env) { Rack::MockRequest.env_for("/test") }
   let(:logger) { Datadog::JSONLogger.new }

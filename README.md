@@ -83,15 +83,18 @@ Sinatra::Application.logger.info("hello")
 # {"dd":{"trace_id":"0","span_id":"0","env":null,"service":"console","version":null},"timestamp":"2023-11-22 22:46:01 +0100","severity":"INFO ","progname":"my_app","message":"hello","my_custom_key":"my_value","my_custom_hash":{"key":"value"}}
 ```
 
-### SinatraMiddleware
+### RackMiddleware
 
-`Datadog::SinatraMiddleware` formats Rack requests as JSON and disables the default textual stdout of `Rack::CommonLogger`:
+`Datadog::RackMiddleware` formats Rack requests as JSON and disables the default textual stdout of `Rack::CommonLogger`:
 
 ```ruby
 # Example in Sinatra (app.rb)
-require 'datadog/sinatra_middleware'
+require 'datadog/rack_middleware'
 
-use Datadog::SinatraMiddleware, logger
+use Datadog::RackMiddleware, logger
+
+# Example in Rails (config.rb)
+config.middleware.use Datadog::RackMiddleware, config.logger
 ```
 
 ## Features
