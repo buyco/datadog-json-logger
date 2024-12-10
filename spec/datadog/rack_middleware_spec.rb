@@ -127,7 +127,7 @@ RSpec.describe Datadog::RackMiddleware do
 
         it "logs the current user" do
           middleware.call(env)
-          expect(logger).to have_received(:info).with(hash_including(user: current_user))
+          expect(logger).to have_received(:info).with(hash_including(usr: current_user))
         end
       end
 
@@ -141,7 +141,7 @@ RSpec.describe Datadog::RackMiddleware do
 
         it "logs the current user" do
           middleware.call(env)
-          expect(logger).to have_received(:info).with(hash_including(user: user))
+          expect(logger).to have_received(:info).with(hash_including(usr: user))
         end
       end
 
@@ -155,7 +155,26 @@ RSpec.describe Datadog::RackMiddleware do
 
         it "does not log the current user" do
           middleware.call(env)
-          expect(logger).to have_received(:info).with(including(:user))
+          expect(logger).to have_received(:info).with(including(:usr))
+        end
+      end
+
+      context "when custom_context is set with usr key" do
+        let(:current_user) do
+          ->(_env) { { id: 1, email: "current_user@from_env.com" } }
+        end
+        let(:custom_context) do
+          -> { { usr: { id: 2, email: "current_user@from_context.com" } } }
+        end
+
+        before do
+          allow(logger.config).to receive(:custom_context).and_return(custom_context)
+          allow(logger.config).to receive(:current_user).and_return(current_user)
+        end
+
+        it "logs the current user" do
+          middleware.call(env)
+          expect(logger).to have_received(:info).with(hash_including(usr: current_user.call(env)))
         end
       end
     end
@@ -168,7 +187,7 @@ RSpec.describe Datadog::RackMiddleware do
 
       it "does not log the current user" do
         middleware.call(env)
-        expect(logger).to have_received(:info).with(hash_not_including(:user))
+        expect(logger).to have_received(:info).with(hash_not_including(:usr))
       end
     end
   end
