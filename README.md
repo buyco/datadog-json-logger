@@ -4,27 +4,40 @@
 [![Rubocop and Rspec](https://github.com/buyco/datadog-json-logger/actions/workflows/main.yml/badge.svg)](https://github.com/buyco/datadog-json-logger/actions/workflows/main.yml)
 [![Publish on RubyGems](https://github.com/buyco/datadog-json-logger/actions/workflows/gem-push.yml/badge.svg)](https://github.com/buyco/datadog-json-logger/actions/workflows/gem-push.yml)
 
-`Datadog::JSONLogger` is a Ruby gem designed to seamlessly integrate Ruby applications with Datadog's logging and tracing services. This gem allows your Ruby application to format its output as JSON, including necessary correlation IDs and other details for optimal Datadog functionality.
+## Overview
 
-## Prerequisites
+`Datadog::JSONLogger` is a Ruby gem that provides seamless integration with Datadog's logging and tracing services. It formats logs as JSON with correlation IDs, making it easy to integrate with Datadog's log management and APM services.
 
-Before you begin, ensure you have [ddtrace](https://github.com/DataDog/dd-trace-rb) configured in your Ruby application, as `Datadog::JSONLogger` relies on `ddtrace` for tracing data.
+## Features
+
+| Feature                 | Description | Status |
+|-------------------------|-------------|---------|
+| JSON correlated logging | Formats logs as JSON with Datadog correlation IDs for better log analysis | ✅ |
+| Tracing                 | Integrates with Datadog APM for distributed tracing | ✅ |
+| Error Tracking          | Compatible with Datadog error tracking | ✅ |
+| Rack Middleware         | Provides a Rack middleware for HTTP request logging | ✅ |
+| Bunny Integration       | Adds tracing for RabbitMQ operations via Bunny | ✅ |
+
+## Requirements
+
+- Ruby 3.0+
+- [ddtrace](https://github.com/DataDog/dd-trace-rb) properly configured in your application
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Add to your application's Gemfile:
 
 ```ruby
 gem 'datadog-json_logger'
 ```
 
-And then execute:
+And run:
 
 ```bash
 bundle install
 ```
 
-Or install it yourself as:
+Or install it directly:
 
 ```bash
 gem install datadog-json_logger
@@ -32,92 +45,165 @@ gem install datadog-json_logger
 
 ## Usage
 
-### JSONLogger
-
-`Datadog::JSONLogger` can be easily integrated into your Ruby application. Here's a quick example of how to use it in a Sinatra application:
+### Basic JSON Logger
 
 ```ruby
-# Example in Sinatra (app.rb)
+require 'datadog/json_logger'
+
+# Create a logger instance
+logger = Datadog::JSONLogger.new
+logger.info('Hello World')
+# => {"dd":{"trace_id":"0","span_id":"0","env":null,"service":"console","version":null},"timestamp":"2023-11-22 22:28:00 +0100","severity":"INFO ","progname":"","message":"Hello World"}
+```
+
+### Configuration
+
+```ruby
+Datadog::JSONLogger.configure do |config|
+  # Function to extract current user from environment
+  config.current_user = ->(env) { { email: env['current_user']&.email } }
+  
+  # Custom environment keys
+  config.controller_key = "sinatra.controller_name"
+  config.resource_key = "sinatra.resource_name"
+  config.action_key = "sinatra.action_name"
+  
+  # Custom context for all logs
+  config.custom_context = -> { { environment: ENV['RACK_ENV'] } }
+end
+```
+
+### With Rails
+
+In your `config/initializers/datadog.rb`:
+
+```ruby
 require 'datadog/json_logger'
 
 Datadog::JSONLogger.configure do |config|
-  config.current_user = ->(env) { { email: env['warned'].user.email } } # Log user on each request
-  config.controller_key = "sinatra.controller_name"
-  config.resource_key   = "sinatra.resource_name"
-  config.action_key     = "sinatra.action_name"
+  config.current_user = ->(env) { { email: env['warden']&.user&.email } } 
+  config.controller_key = "action_controller.instance"
+  config.action_key = "action_dispatch.request.path_parameters[:action]"
+  config.resource_key = "action_dispatch.request.path_parameters[:controller]"
 end
 
-def logger
-  @logger ||= Datadog::JSONLogger.new
-end
-
-set :logger, logger
-
-Sinatra::Application.logger.info("hello")
-# => {"dd":{"trace_id":"0","span_id":"0","env":null,"service":"console","version":null},"timestamp":"2023-11-22 22:28:00 +0100","severity":"INFO ","progname":"","message":"hello"}
+# Configure Rails logger
+Rails.application.config.logger = Datadog::JSONLogger.new
 ```
 
-#### Add Custom Keys
-Create a custom formatter that inherits from `Datadog::Loggers::JSONFormatter` to add custom keys as shown below:
+### With Sinatra
+
+```ruby
+require 'datadog/json_logger'
+require 'datadog/rack_middleware'
+
+class MyApp < Sinatra::Base
+  configure do
+    # Configure Datadog logger
+    Datadog::JSONLogger.configure do |config|
+      config.current_user = ->(env) { { email: env['warden']&.user&.email } }
+    end
+    
+    # Set up logger
+    set :logger, Datadog::JSONLogger.new
+    
+    # Add Rack middleware
+    use Datadog::RackMiddleware, settings.logger
+  end
+  
+  # Your routes here
+end
+```
+
+### Custom Formatter
+
+Create a custom formatter to add more fields to your logs:
 
 ```ruby
 class CustomFormatter < Datadog::Loggers::JSONFormatter
   def self.call(severity, datetime, progname, msg)
     super do |log_hash|
-      log_hash[:my_custom_key] = "my_value"
-      log_hash[:my_custom_hash] = { key: "value" }
+      log_hash[:app_name] = "my_application"
+      log_hash[:environment] = ENV['RACK_ENV']
+      log_hash[:custom_field] = "custom value"
     end
   end
 end
 
-def logger
-  return @logger if @logger
-
-  @logger = Datadog::JSONLogger.new
-  @logger.progname = "my_app"
-  @logger.formatter = CustomFormatter
-  @logger
-end
-
-Sinatra::Application.logger.info("hello")
-# {"dd":{"trace_id":"0","span_id":"0","env":null,"service":"console","version":null},"timestamp":"2023-11-22 22:46:01 +0100","severity":"INFO ","progname":"my_app","message":"hello","my_custom_key":"my_value","my_custom_hash":{"key":"value"}}
+# Use the custom formatter
+logger = Datadog::JSONLogger.new
+logger.formatter = CustomFormatter
 ```
 
-### RackMiddleware
+### Rack Middleware
 
-`Datadog::RackMiddleware` formats Rack requests as JSON and disables the default textual stdout of `Rack::CommonLogger`:
+The `Datadog::RackMiddleware` logs HTTP requests in a structured format and disables the default `Rack::CommonLogger` output:
 
 ```ruby
-# Example in Sinatra (app.rb)
 require 'datadog/rack_middleware'
 
+# For Rack applications
 use Datadog::RackMiddleware, logger
 
-# Example in Rails (config.rb)
-config.middleware.use Datadog::RackMiddleware, config.logger
+# For Rails
+Rails.application.config.middleware.use Datadog::RackMiddleware, Rails.logger
 ```
 
-### Bunny
+Sample output:
 
-`Datadog::Bunny` provides tracing for Bunny (RabbitMQ client):
+```json
+{
+  "dd": {
+    "trace_id": "1234567890",
+    "span_id": "0987654321",
+    "env": "production",
+    "service": "my-service",
+    "version": "1.0.0"
+  },
+  "request": true,
+  "params": {"q": "search"},
+  "status": 200,
+  "format": "application/json",
+  "duration": 45,
+  "request_ip": "127.0.0.1",
+  "method": "GET",
+  "path": "/api/users",
+  "controller": "UsersController",
+  "action": "index",
+  "resource": "users",
+  "usr": {"email": "user@example.com"},
+  "message": "Received GET request from 127.0.0.1 at /api/users Responded with status 200 in 45ms."
+}
+```
+
+### Bunny Integration
+
+Trace RabbitMQ operations with the Bunny integration:
 
 ```ruby
-# Example in Sinatra (app.rb)
-require 'datadog/bunny'
+require 'datadog/json_logger'
 
+# Configure Datadog tracing
 Datadog.configure do |c|
-  c.use :bunny, service_name: 'my-rabbitmq-service'
+  c.tracing.instrument :bunny, service_name: 'rabbitmq-service'
+  # Other Datadog configurations...
+end
+
+# Use Bunny as normal
+bunny = Bunny.new
+bunny.start
+
+channel = bunny.create_channel
+queue = channel.queue("my_queue")
+
+# Publishing (automatically traced)
+channel.default_exchange.publish("Hello World!", routing_key: queue.name)
+
+# Consuming (automatically traced)
+queue.subscribe(block: true) do |delivery_info, properties, payload|
+  puts "Received: #{payload}"
 end
 ```
-
-## Features
-| Feature                 | Link                                            | Compatibility |
-|-------------------------|-------------------------------------------------|---------------|
-| JSON correlated logging | [Ruby Collection](https://docs.datadoghq.com/logs/log_collection/ruby/?tab=lograge) | ✅             |
-| Tracing                 | [Ruby Tracing application](https://docs.datadoghq.com/tracing/trace_collection/dd_libraries/ruby) | ✅             |
-| Error Tracking          | [Datadog error tracking](https://www.datadoghq.com/product/error-tracking) | ✅             |
-| Bunny                   | [Ruby Bunny](https://github.com/ruby-amqp/bunny) | ✅             |
-
 
 ## Development
 

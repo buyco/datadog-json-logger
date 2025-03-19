@@ -5,6 +5,7 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in datadog-sinatra_logger.gemspec
 gemspec
 
+gem "bunny", "~> 2.23"
 gem "irb", "~> 1.9.1"
 gem "rake", "~> 13.0"
 
