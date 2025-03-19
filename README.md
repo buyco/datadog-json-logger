@@ -97,12 +97,26 @@ use Datadog::RackMiddleware, logger
 config.middleware.use Datadog::RackMiddleware, config.logger
 ```
 
+### Bunny
+
+`Datadog::Bunny` provides tracing for Bunny (RabbitMQ client):
+
+```ruby
+# Example in Sinatra (app.rb)
+require 'datadog/bunny'
+
+Datadog.configure do |c|
+  c.use :bunny, service_name: 'my-rabbitmq-service'
+end
+```
+
 ## Features
 | Feature                 | Link                                            | Compatibility |
 |-------------------------|-------------------------------------------------|---------------|
 | JSON correlated logging | [Ruby Collection](https://docs.datadoghq.com/logs/log_collection/ruby/?tab=lograge) | ✅             |
 | Tracing                 | [Ruby Tracing application](https://docs.datadoghq.com/tracing/trace_collection/dd_libraries/ruby) | ✅             |
 | Error Tracking          | [Datadog error tracking](https://www.datadoghq.com/product/error-tracking) | ✅             |
+| Bunny                   | [Ruby Bunny](https://github.com/ruby-amqp/bunny) | ✅             |
 
 
 ## Development
