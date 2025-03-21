@@ -205,6 +205,23 @@ queue.subscribe(block: true) do |delivery_info, properties, payload|
 end
 ```
 
+#### End-to-End Tracing for Bunny Consumers
+
+For complete end-to-end tracing when consuming messages with Bunny, you need to manually continue the trace by using the helper in `lib/datadog/tracing/contrib/bunny/utils.rb`. Since the `on_delivery` method is a block, it's not possible to automatically retrieve trace information to continue the trace.
+
+```ruby
+# When consuming a message, manually continue the trace using the helper
+queue.subscribe(block: true) do |delivery_info, properties, payload|
+  # Continue the trace from the producer
+  if properties.headers && properties.headers[:trace_digest]
+    Datadog::Tracing::Contrib::Bunny::Utils.continue_trace!(properties.headers[:trace_digest])
+  end
+  
+  # Process the message
+  puts "Received: #{payload}"
+end
+```
+
 ## Development
 
 After checking out the repo, run `bundle install` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
