@@ -60,9 +60,9 @@ module Datadog
                 span.set_tag(Ext::SPAN_EXCHANGE_NAME, name)
 
                 if (trace_digest = Datadog::Tracing.active_trace&.to_digest)
-                  opts[:headers] ||= {}
+                  opts[:trace_digest] ||= {}
                   hash = JSON.parse(trace_digest.to_json)
-                  opts[:headers].merge!(hash)
+                  opts[:trace_digest].merge!(hash)
                 end
                 super
               end

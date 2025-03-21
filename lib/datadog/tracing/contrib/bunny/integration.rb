@@ -4,6 +4,7 @@ require "datadog/tracing/contrib"
 require "datadog/tracing/contrib/integration"
 require "datadog/tracing/contrib/bunny/configuration/settings"
 require "datadog/tracing/contrib/bunny/patcher"
+require "datadog/tracing/contrib/bunny/utils"
 
 module Datadog
   module Tracing
