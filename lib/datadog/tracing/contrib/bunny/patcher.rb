@@ -45,12 +45,6 @@ module Datadog
                 span.set_tag(Datadog::Tracing::Metadata::Ext::TAG_COMPONENT, Ext::APP)
                 span.set_tag(Ext::SPAN_CHANNEL_ID, id)
 
-                if (trace_digest = Datadog::Tracing.active_trace&.to_digest)
-                  opts[:headers] ||= {}
-                  hash = JSON.parse(trace_digest.to_json)
-                  opts[:headers].merge!(hash)
-                end
-
                 super
               end
             end
