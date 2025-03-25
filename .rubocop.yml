@@ -2,6 +2,7 @@ AllCops:
   Exclude:
     - 'sig/**/*'
     - 'datadog-json_logger.gemspec'
+    - 'lib/datadog/tracing/contrib/bunny/patcher.rb'
     - 'vendor/**/*'
   NewCops: enable
   TargetRubyVersion: 3.0
