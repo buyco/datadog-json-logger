@@ -45,7 +45,7 @@ module Datadog
     def safely_process_request(env)
       app.call(env)
     rescue StandardError => e
-      [500, { "Content-Type": "application/json" }, [[e.class.name, e.message].join(": ")]]
+      [500, { "Content-Type": "application/json" }, ["#{e.class.name}: #{e.message}"]]
     end
 
     def log_request(request, env, status, headers, start_time, end_time)
