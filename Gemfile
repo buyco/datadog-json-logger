@@ -13,8 +13,8 @@ group :development do
   gem "byebug", "~> 11.1.3"
   gem "rbs", "~> 3.3.2"
   gem "rubocop", "~> 1.21"
-  gem "rubocop-rake", "~> 0.6.0"
-  gem "rubocop-rspec", "~> 2.25.0"
+  gem "rubocop-rake", "~> 0.7.1"
+  gem "rubocop-rspec", "~> 3.9"
   gem "rubycritic", "~> 4.9.0"
 end
 

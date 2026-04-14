@@ -1,3 +1,7 @@
+plugins:
+  - rubocop-rake
+  - rubocop-rspec
+
 AllCops:
   Exclude:
     - 'sig/**/*'
@@ -5,7 +9,7 @@ AllCops:
     - 'lib/datadog/tracing/contrib/bunny/patcher.rb'
     - 'vendor/**/*'
   NewCops: enable
-  TargetRubyVersion: 3.0
+  TargetRubyVersion: 3.4
 
 Style/StringLiterals:
   Enabled: true
@@ -34,3 +38,21 @@ Metrics/BlockLength:
 
 Metrics/ParameterLists:
   Max: 6
+
+RSpec/MultipleMemoizedHelpers:
+  Max: 10
+
+RSpec/MultipleExpectations:
+  Max: 5
+
+RSpec/NestedGroups:
+  Max: 4
+
+RSpec/ExampleLength:
+  Max: 15
+
+RSpec/MessageChain:
+  Enabled: false
+
+RSpec/VerifiedDoubles:
+  Enabled: false

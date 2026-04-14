@@ -15,15 +15,20 @@ RSpec.describe Datadog::Tracing::Contrib::Bunny::Patcher do
     end
 
     it "patches Bunny classes with instrumentation" do
-      expect(Bunny::Channel).to receive(:prepend).with(Datadog::Tracing::Contrib::Bunny::Patcher::ChannelPatch)
-      expect(Bunny::Exchange).to receive(:prepend).with(Datadog::Tracing::Contrib::Bunny::Patcher::ExchangePatch)
-      expect(Bunny::Queue).to receive(:prepend).with(Datadog::Tracing::Contrib::Bunny::Patcher::QueuePatch)
-      expect(Bunny::Consumer).to receive(:prepend).with(Datadog::Tracing::Contrib::Bunny::Patcher::ConsumerPatch)
+      allow(Bunny::Channel).to receive(:prepend)
+      allow(Bunny::Exchange).to receive(:prepend)
+      allow(Bunny::Queue).to receive(:prepend)
+      allow(Bunny::Consumer).to receive(:prepend)
 
       Bunny::Channel.prepend(Datadog::Tracing::Contrib::Bunny::Patcher::ChannelPatch)
       Bunny::Exchange.prepend(Datadog::Tracing::Contrib::Bunny::Patcher::ExchangePatch)
       Bunny::Queue.prepend(Datadog::Tracing::Contrib::Bunny::Patcher::QueuePatch)
       Bunny::Consumer.prepend(Datadog::Tracing::Contrib::Bunny::Patcher::ConsumerPatch)
+
+      expect(Bunny::Channel).to have_received(:prepend).with(Datadog::Tracing::Contrib::Bunny::Patcher::ChannelPatch)
+      expect(Bunny::Exchange).to have_received(:prepend).with(Datadog::Tracing::Contrib::Bunny::Patcher::ExchangePatch)
+      expect(Bunny::Queue).to have_received(:prepend).with(Datadog::Tracing::Contrib::Bunny::Patcher::QueuePatch)
+      expect(Bunny::Consumer).to have_received(:prepend).with(Datadog::Tracing::Contrib::Bunny::Patcher::ConsumerPatch)
     end
   end
 
@@ -57,15 +62,17 @@ RSpec.describe Datadog::Tracing::Contrib::Bunny::Patcher do
 
     describe "#basic_consume" do
       it "traces the consume operation" do
-        expect(Datadog::Tracing).to receive(:trace).with("bunny.consume", service: "test-service")
+        allow(Datadog::Tracing).to receive(:trace)
         channel.basic_consume("queue")
+        expect(Datadog::Tracing).to have_received(:trace).with("bunny.consume", service: "test-service")
       end
     end
 
     describe "#basic_publish" do
       it "traces the publish operation" do
-        expect(Datadog::Tracing).to receive(:trace).with("bunny.publish", service: "test-service")
+        allow(Datadog::Tracing).to receive(:trace)
         channel.basic_publish("payload", "exchange", "routing_key")
+        expect(Datadog::Tracing).to have_received(:trace).with("bunny.publish", service: "test-service")
       end
     end
   end
@@ -111,8 +118,8 @@ RSpec.describe Datadog::Tracing::Contrib::Bunny::Patcher do
       end
 
       it "traces the exchange publish operation" do
-        expect(Datadog::Tracing).to receive(:trace).with("bunny.exchange.publish", service: "test-service")
         exchange.publish("payload")
+        expect(Datadog::Tracing).to have_received(:trace).with("bunny.exchange.publish", service: "test-service")
       end
 
       it "adds trace digest to options when distributed tracing is available" do
@@ -149,8 +156,9 @@ RSpec.describe Datadog::Tracing::Contrib::Bunny::Patcher do
 
     describe "#pop" do
       it "traces the queue pop operation" do
-        expect(Datadog::Tracing).to receive(:trace).with("bunny.queue.pop", service: "test-service")
+        allow(Datadog::Tracing).to receive(:trace)
         queue.pop
+        expect(Datadog::Tracing).to have_received(:trace).with("bunny.queue.pop", service: "test-service")
       end
     end
   end
@@ -184,10 +192,9 @@ RSpec.describe Datadog::Tracing::Contrib::Bunny::Patcher do
 
     describe "#on_delivery" do
       it "traces the consumer on_delivery operation" do
-        expect(Datadog::Tracing).to receive(:trace).with("bunny.consume", service: "test-service")
-        # Vérifie que le bloc est bien appelé
         called = false
         consumer.on_delivery { called = true }
+        expect(Datadog::Tracing).to have_received(:trace).with("bunny.consume", service: "test-service")
         expect(called).to be true
       end
     end

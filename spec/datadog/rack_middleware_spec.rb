@@ -116,8 +116,7 @@ RSpec.describe Datadog::RackMiddleware do
 
     context "when current_user is set" do
       before do
-        allow(logger.config).to receive(:current_user).and_return(current_user)
-        allow(logger.config).to receive(:log_current_user?).and_return(true)
+        allow(logger.config).to receive_messages(current_user: current_user, log_current_user?: true)
       end
 
       context "when current_user is fixed" do
@@ -168,8 +167,7 @@ RSpec.describe Datadog::RackMiddleware do
         end
 
         before do
-          allow(logger.config).to receive(:custom_context).and_return(custom_context)
-          allow(logger.config).to receive(:current_user).and_return(current_user)
+          allow(logger.config).to receive_messages(custom_context: custom_context, current_user: current_user)
         end
 
         it "logs the current user" do
@@ -181,8 +179,7 @@ RSpec.describe Datadog::RackMiddleware do
 
     context "when current_user is not set" do
       before do
-        allow(logger.config).to receive(:current_user).and_return(nil)
-        allow(logger.config).to receive(:log_current_user?).and_return(false)
+        allow(logger.config).to receive_messages(current_user: nil, log_current_user?: false)
       end
 
       it "does not log the current user" do

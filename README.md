@@ -21,7 +21,7 @@
 ## Requirements
 
 - Ruby 3.0+
-- [ddtrace](https://github.com/DataDog/dd-trace-rb) properly configured in your application
+- [datadog](https://github.com/DataDog/dd-trace-rb) properly configured in your application
 
 ## Installation
 
@@ -62,12 +62,12 @@ logger.info('Hello World')
 Datadog::JSONLogger.configure do |config|
   # Function to extract current user from environment
   config.current_user = ->(env) { { email: env['current_user']&.email } }
-  
+
   # Custom environment keys
   config.controller_key = "sinatra.controller_name"
   config.resource_key = "sinatra.resource_name"
   config.action_key = "sinatra.action_name"
-  
+
   # Custom context for all logs
   config.custom_context = -> { { environment: ENV['RACK_ENV'] } }
 end
@@ -81,7 +81,7 @@ In your `config/initializers/datadog.rb`:
 require 'datadog/json_logger'
 
 Datadog::JSONLogger.configure do |config|
-  config.current_user = ->(env) { { email: env['warden']&.user&.email } } 
+  config.current_user = ->(env) { { email: env['warden']&.user&.email } }
   config.controller_key = "action_controller.instance"
   config.action_key = "action_dispatch.request.path_parameters[:action]"
   config.resource_key = "action_dispatch.request.path_parameters[:controller]"
@@ -103,14 +103,14 @@ class MyApp < Sinatra::Base
     Datadog::JSONLogger.configure do |config|
       config.current_user = ->(env) { { email: env['warden']&.user&.email } }
     end
-    
+
     # Set up logger
     set :logger, Datadog::JSONLogger.new
-    
+
     # Add Rack middleware
     use Datadog::RackMiddleware, settings.logger
   end
-  
+
   # Your routes here
 end
 ```

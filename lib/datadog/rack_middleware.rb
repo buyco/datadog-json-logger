@@ -12,7 +12,7 @@ module Rack
   end
 end
 
-module Datadog
+module Datadog # rubocop:disable Style/OneClassPerFile
   class RackMiddleware
     attr_reader :app, :logger
 
