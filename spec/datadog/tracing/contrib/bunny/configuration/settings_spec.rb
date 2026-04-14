@@ -6,7 +6,7 @@ require "datadog/tracing/contrib/bunny/configuration/settings"
 RSpec.describe Datadog::Tracing::Contrib::Bunny::Configuration::Settings do
   subject(:settings) { described_class.new }
 
-  it { is_expected.to be_a_kind_of(Datadog::Tracing::Contrib::Configuration::Settings) }
+  it { is_expected.to be_a(Datadog::Tracing::Contrib::Configuration::Settings) }
 
   describe "#service_name" do
     subject(:service_name) { settings.service_name }

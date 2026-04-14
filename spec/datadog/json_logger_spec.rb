@@ -4,8 +4,9 @@ require "spec_helper"
 require "datadog/json_logger"
 
 RSpec.describe Datadog::JSONLogger do
-  let(:output) { StringIO.new }
   subject(:logger) { described_class.new(output) }
+
+  let(:output) { StringIO.new }
 
   describe "#initialize" do
     it "initializes with custom output" do

@@ -16,10 +16,10 @@ RSpec.describe Datadog::Tracing::Contrib::Bunny::Utils do
 
     context "when metadata is a hash" do
       it "continues the trace with the trace digest" do
-        expect(Datadog::Tracing::TraceDigest).to receive(:new).with(trace_id: 123, span_id: 456)
-        expect(Datadog::Tracing).to receive(:continue_trace!).with(trace_digest)
-
         described_class.continue_trace!(metadata)
+
+        expect(Datadog::Tracing::TraceDigest).to have_received(:new).with(trace_id: 123, span_id: 456)
+        expect(Datadog::Tracing).to have_received(:continue_trace!).with(trace_digest)
       end
     end
 
@@ -27,18 +27,18 @@ RSpec.describe Datadog::Tracing::Contrib::Bunny::Utils do
       let(:json_metadata) { metadata.to_json }
 
       it "parses the JSON and continues the trace" do
-        expect(Datadog::Tracing::TraceDigest).to receive(:new).with(trace_id: 123, span_id: 456)
-        expect(Datadog::Tracing).to receive(:continue_trace!).with(trace_digest)
-
         described_class.continue_trace!(json_metadata)
+
+        expect(Datadog::Tracing::TraceDigest).to have_received(:new).with(trace_id: 123, span_id: 456)
+        expect(Datadog::Tracing).to have_received(:continue_trace!).with(trace_digest)
       end
     end
 
     context "when metadata is nil or invalid" do
       it "returns early without continuing the trace" do
-        expect(Datadog::Tracing).not_to receive(:continue_trace!)
-
         described_class.continue_trace!(nil)
+
+        expect(Datadog::Tracing).not_to have_received(:continue_trace!)
       end
     end
   end

@@ -18,7 +18,7 @@ RSpec.describe Datadog::Tracing::Contrib::Bunny::Integration do
     subject { described_class.version }
 
     context "when bunny is installed" do
-      it { is_expected.to be_a_kind_of(Gem::Version) }
+      it { is_expected.to be_a(Gem::Version) }
     end
   end
 
@@ -55,7 +55,7 @@ RSpec.describe Datadog::Tracing::Contrib::Bunny::Integration do
   describe "#new_configuration" do
     subject { integration.new_configuration }
 
-    it { is_expected.to be_a_kind_of(Datadog::Tracing::Contrib::Bunny::Configuration::Settings) }
+    it { is_expected.to be_a(Datadog::Tracing::Contrib::Bunny::Configuration::Settings) }
   end
 
   describe "#patcher" do
