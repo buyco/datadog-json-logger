@@ -18,10 +18,22 @@ module Datadog
                                         return
                                       end
 
+            # A producer on a newer datadog gem may serialize digest fields this
+            # consumer's TraceDigest does not know yet; drop them instead of raising.
+            serializes_trace_digest = serializes_trace_digest.slice(*supported_trace_digest_keys)
+
             trace_digest = Datadog::Tracing::TraceDigest.new(**serializes_trace_digest)
             return unless trace_digest
 
             Datadog::Tracing.continue_trace!(trace_digest)
+          end
+
+          # @return [Array<Symbol>]
+          def supported_trace_digest_keys
+            @supported_trace_digest_keys ||=
+              Datadog::Tracing::TraceDigest.instance_method(:initialize).parameters.filter_map do |type, name|
+                name if %i[key keyreq].include?(type)
+              end
           end
         end
       end
